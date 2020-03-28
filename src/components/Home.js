@@ -52,16 +52,11 @@ const Home = (props) => {
             return <div>Loading...</div>
         }
     } else {
-        if ( context.userStatus === 'logged-out' ) return <Redirect to='/login' />;
-        
-        const thumbnail = context.user.thumbnail ? context.user.thumbnail : 'https://www.computerhope.com/jargon/g/geek.jpg';
+        if ( context.userStatus === 'logged-out' ) return <Redirect to='/login' />;        
 
         return (
             <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                <div style={{width: 200, height: 200, background: `url(${thumbnail})`, backgroundSize: 'cover', borderRadius: '50%'}} />
-
-                Hello <strong>{context.user.name}</strong>! We are really really glad to see your name here
-                <button onClick={() => { context.setUserInfo({userStatus: 'logged-out', user: null}) }}>Logout</button>
+                Home
             </div>
         )
     }

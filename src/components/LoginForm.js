@@ -46,11 +46,8 @@ const LoginForm = () => {
         }
     }
     
-    if ( state.completed ) {        
-        return <Redirect to={{
-            pathname: '/',
-            userStatus: 'logged-in'
-        }} />
+    if ( context.userStatus === 'logged-in' ) {        
+        return <Redirect to='/' />
     } else {        
         return (
             <StyledForm onSubmit={(e) => login(e)}>

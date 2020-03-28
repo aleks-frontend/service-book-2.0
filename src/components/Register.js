@@ -4,6 +4,7 @@ import StyledForm from './StyledForm';
 
 const Register = () => {
     const [ state, setState ] = React.useState({
+        completed: false,
         email: '',
         password: '',
         confirmPassword: '',
@@ -17,23 +18,31 @@ const Register = () => {
         })
     }
 
-    const register = async () => {
+    const register = async (e) => {
+        e.preventDefault();
+        
         if ( state.password !== state.confirmPassword ) {
             alert('passwords dont match');
             return;
         }
+
+        let response;
         
-        const response = await fetch('https://radiant-crag-38285.herokuapp.com/users/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                email: state.email,
-                name: state.name,
-                password: state.password,
-            })
-        });
+        try {
+            response = await fetch('https://radiant-crag-38285.herokuapp.com/users/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: "cs.elod@gmail.com",
+                    name: "Elooood",
+                    password: "123",
+                })
+            });
+        } catch(err) {
+            console.log(err);
+        }
 
         if ( response.status === 200 ) {
             setState({
@@ -63,7 +72,7 @@ const Register = () => {
             <input type="password" value={state.password} onChange={(event) => handleInputChange('password', event)} />
             <label>Confirm Password</label>
             <input type="password" value={state.confirmPassword} onChange={(event) => handleInputChange('confirmPassword', event)} />
-            <button type="submit" onClick={register}>Register</button>
+            <button onClick={(e) => register(e)}>Register</button>
         </StyledForm>
     );
 };
