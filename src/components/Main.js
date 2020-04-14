@@ -17,6 +17,7 @@ import NewService from './NewService';
 import History from './History';
 import Profile from './Profile';
 import Entities from './Entities';
+import ServiceForm from './ServiceForm';
 import NotFound from './NotFound';
 import styled from 'styled-components';
 
@@ -81,7 +82,7 @@ const Main = () => {
                     <Content>
                         <Switch>
                             <PrivateRoute exact path='/' component={Home} />
-                            <PrivateRoute exact path='/new-service' component={NewService} />
+                            <PrivateRoute exact path='/new-service' component={ServiceForm} />
                             <PrivateRoute exact path='/history' component={History} />
                             <PrivateRoute exact path='/customers' component={Entities} key="customers" entityName="customers" entityLabel="Customer" />
                             <PrivateRoute exact path='/actions' component={Entities} key="actions" entityName="actions" entityLabel="Action" />

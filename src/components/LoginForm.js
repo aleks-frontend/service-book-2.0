@@ -6,7 +6,6 @@ import { Redirect } from 'react-router-dom';
 const LoginForm = () => {
     const context = React.useContext(AppContext);
     const [ state, setState ] = React.useState({
-        completed: false,
         email: '',
         password: ''
     });
@@ -35,11 +34,6 @@ const LoginForm = () => {
             const { token, user } = await response.json();
 
             context.setUserInfo({userStatus: 'logged-in', token, user});
-            
-            setState({
-                ...state,
-                completed: true
-            });
         } else {
             const error = await response.text();
             alert(error);

@@ -80,8 +80,8 @@ const CreateEntity = (props) => {
     for (const field of props.fields) {
         defaultState[field.name] = '';
 
-        if ( field.defaultVal ) {
-            defaultState[field.name] = field.presetVal;
+        if (field.defaultVal) {
+            defaultState[field.name] = props.presetVal;
         }
     }
 
@@ -96,9 +96,9 @@ const CreateEntity = (props) => {
         const entityStateCopy = { ...state.entityState };
         for (const field of props.fields) {
             if (field.calculated && field.calculated.indexOf(event.target.name) > -1) {
-                const str = field.calculated.map(item => {                
-                    if ( item === 'serial' ) {
-                        if ( item === event.target.name ) {
+                const str = field.calculated.map(item => {
+                    if (item === 'serial') {
+                        if (item === event.target.name) {
                             return event.target.value !== '' ? `(sn: ${event.target.value})` : '';
                         } else {
                             return entityStateCopy[item] !== '' ? `(sn: ${entityStateCopy[item]})` : '';
@@ -119,13 +119,14 @@ const CreateEntity = (props) => {
     const handleFormSubmit = async (event) => {
         event.preventDefault();
         const emptyRequiredInputs = {};
+        let newEntity = {};
 
         // Checking for empty required fields
         for (const field of props.fields) {
             if (field.required) {
                 const isEmptyString = state.entityState[field.name] === '';
 
-                if ( isEmptyString ) {
+                if (isEmptyString) {
                     emptyRequiredInputs[field.name] = 'empty-required';
                 } else if (emptyRequiredInputs.hasOwnProperty(field.name)) {
                     delete emptyRequiredInputs[field.name];
@@ -141,42 +142,38 @@ const CreateEntity = (props) => {
 
         // Checking if this a regular CreateEntity component 
         // (not the case when we are calling it from NewService)
-        if (props.isDirect) {
-            try {
-                await createEntityAPI({ 
-                    entityName: props.stateName, 
-                    entityData: state.entityState, 
-                    token: context.token 
-                });
-                context.showSnackbar(`new ${props.entityLabel.toLowerCase()} was created successfully (${state.entityState.name})`);
-            } catch(err) {
-                context.showSnackbar(err);
-            }
+        try {
+            newEntity = await createEntityAPI({
+                entityName: props.endpointName || props.stateName,
+                entityData: state.entityState,
+                token: context.token
+            });
             
-            props.hidePopup();
-            return;
+            context.showSnackbar(`new ${props.entityLabel.toLowerCase()} was created successfully (${state.entityState.name})`);
+            
+            if (props.isDirect) {
+                props.hidePopup();
+            } else {
+                props.addEntityToLocalState({ 
+                    entity: state.entityState, 
+                    stateKey: props.stateName, 
+                    isMulti: props.isMulti, 
+                    id: newEntity._id
+                });
+            }
+        } catch (err) {
+            context.showSnackbar(err);
         }
 
-        // Case when we are adding the new device from the update form
-        // adding devices that were added during the active service (not the received ones)
-        if (props.isNewDevice) {
-            props.addEntity(state.entityState, props.stateName);
-            props.showSnackbar(`${props.stateName} created`);
-            return;
-        }
-
-        // Used only in NewService component
-        props.addEntity(state.entityState, props.stateName, props.isMulti);
-        props.showSnackbar(`${props.stateName} created`);
     }
 
     React.useEffect(() => {
         for (const field of props.fields) {
             defaultState[field.name] = field.defaultVal ? props.presetVal : '';
         }
-        
+
         setState({ ...state, entityState: { ...defaultState } })
-    }, [props.name]);
+    }, [props.presetVal]);
 
     return (
         <StyledCreateEntity onClick={(e) => e.stopPropagation()}>

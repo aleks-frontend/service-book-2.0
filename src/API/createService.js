@@ -1,6 +1,6 @@
-export default ({ entityName, entityData, token }) => {
+export default ({ serviceData, token }) => {
     return new Promise( async (resolve, reject) =>  {
-        let url = `https://radiant-crag-38285.herokuapp.com/${entityName}`;
+        let url = `https://radiant-crag-38285.herokuapp.com/services`;
 
         const response = await fetch(url, {
             method: 'POST',
@@ -8,12 +8,11 @@ export default ({ entityName, entityData, token }) => {
                 'x-auth-token': token,
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(entityData)
+            body: JSON.stringify(serviceData)
         });
 
         if (response.status === 200) {
-            const entity = await response.json();
-            resolve(entity);
+            resolve();
         } else {
             const error = await response.text();
             reject(error);

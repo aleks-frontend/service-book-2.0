@@ -12,7 +12,8 @@ const AppProvider = (props) => {
         activePage: 'home',
         snackbarVisible: false,
         snackbarEntity: '',
-        snackbarAction: ''
+        snackbarAction: '',
+        statusActiveFilters: [],
     });
 
     const setUserInfo = ({ userStatus, token, user }) => {
@@ -52,6 +53,26 @@ const AppProvider = (props) => {
         });
     }
 
+    const setStatusActiveFilters = ({ values, reset }) => {
+        let activeFiltersCopy = reset ? values : [...state.statusActiveFilters];
+        console.log(activeFiltersCopy);
+        
+        if ( !reset ) {            
+            for ( const value of values ) {
+                if (activeFiltersCopy.includes(value)) {
+                    activeFiltersCopy = activeFiltersCopy.filter(status => (status !== value));
+                } else {
+                    activeFiltersCopy.push(value);
+                }
+            }
+        }
+        
+        setState({
+            ...state,
+            statusActiveFilters: activeFiltersCopy
+        });
+    }
+
     return (
         <AppContext.Provider value={{
             userStatus: state.userStatus,
@@ -63,7 +84,9 @@ const AppProvider = (props) => {
             snackbarVisible: state.snackbarVisible,
             snackbarMessage: state.snackbarMessage,
             showSnackbar,
-            hideSnackbar
+            hideSnackbar,
+            statusActiveFilters: state.statusActiveFilters,
+            setStatusActiveFilters,
         }}>
             {props.children}
         </AppContext.Provider>
