@@ -3,9 +3,9 @@ import styled from 'styled-components';
 import MaterialTable from 'material-table';
 import tableIcons from '../tableIcons';
 import { AppContext } from './AppProvider';
-import getEntities from '../API/getEntities';
-import deleteEntity from '../API/deleteEntity';
-import updateEntity from '../API/updateEntity';
+import getEntitiesAPI from '../API/getEntities';
+import deleteEntityAPI from '../API/deleteEntity';
+import updateEntityAPI from '../API/updateEntity';
 
 const StyledTableWrapper = styled.div`
   width: 100%;
@@ -44,14 +44,14 @@ const DisplayEntity = (props) => {
         title=""
         columns={columns}
         data={(query) => {
-          return getEntities({ query: query, token: context.token, entityName: props.name })
+          return getEntitiesAPI({ query: query, token: context.token, entityName: props.name })
           }
         }
         editable={
           {
             onRowDelete: async (oldData) => {
               try {
-                await deleteEntity({ deletedRowData: oldData, token: context.token, entityName: props.name })
+                await deleteEntityAPI({ id: oldData._id, token: context.token, entityName: props.name })
                 context.showSnackbar(`${props.entityLabel.toLowerCase()} was deleted (${oldData.name})`);
               } catch(err) {
                 context.showSnackbar(`delete action failed`);
@@ -60,7 +60,7 @@ const DisplayEntity = (props) => {
             },
             onRowUpdate: async (newData, oldData) => {
               try {
-                await updateEntity({ afterUpdate: newData, beforeUpdate: oldData, token: context.token, entityName: props.name })
+                await updateEntityAPI({ afterUpdate: newData, beforeUpdate: oldData, token: context.token, entityName: props.name })
                 context.showSnackbar(`${props.entityLabel.toLowerCase()} was updated (${oldData.name})`);
               } catch(err) {
                 context.showSnackbar(err);

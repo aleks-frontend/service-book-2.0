@@ -169,7 +169,7 @@ const HistoryCard = (props) => {
         return (
             service.devices.map((device, index) => {
                 const coma = (index < service.devices.length - 1) ? ', ' : '';
-                return `${device.deviceName}${coma}`;
+                return `${device.name}${coma}`;
             })
         );
     }
@@ -193,8 +193,8 @@ const HistoryCard = (props) => {
         return (
             <StyledActions>
                 {renderActionsRows()}
-                {/* {renderNewDevicesRows()} */}
-                {/* {renderPricingTableFooter()} */}
+                {renderNewDevicesRows()}
+                {renderPricingTableFooter()}
             </StyledActions>
         )
     }
@@ -203,9 +203,9 @@ const HistoryCard = (props) => {
         return (
             service.actions.map((action, index) => {
                 return (
-                    <React.Fragment key={index}>
+                    <React.Fragment key={`action-${index}`}>
                         <div className="text">
-                            <div className="name">{action.actionName}</div>
+                            <div className="name">{action.name}</div>
                             <div className="info">quantity: {action.quantity}</div>
                         </div>
                         <div className="price">$ {action.price * action.quantity}</div>
@@ -222,10 +222,10 @@ const HistoryCard = (props) => {
         return (
             newDevices.map((newDevice, index) => {
                 return (
-                    <React.Fragment key={newDevice.rowId}>
+                    <React.Fragment key={`new-device-${index}`}>
                         <div className="text">
-                            <div className="name">{context.getDeviceNameById(newDevice.deviceId)}</div>
-                            {context.getDeviceSerialById(newDevice.deviceId) !== '' && <div className="info">serial number: <strong>{context.getDeviceSerialById(newDevice.deviceId)}</strong></div>}
+                            <div className="name">{newDevice.name}</div>
+                            {newDevice.serial !== '' && <div className="info">serial number: <strong>{newDevice.serial}</strong></div>}
                             <div className="info">quantity: <strong>{newDevice.quantity}</strong></div>
                         </div>
                         <div className="price">$ {newDevice.price * newDevice.quantity}</div>
@@ -311,24 +311,13 @@ const HistoryCard = (props) => {
                         onClick={() => props.showPopup(service)} />
                     <IconButton
                         icon="delete"
-                        onClick={() => props.updatePromptedId(id)} />
+                        onClick={() => props.updateDeletedServiceId(service._id)} />
                     <IconButton
                         icon="expand"
                         onClick={extendHistoryItem} />
                     <IconButton
                         icon="print"
-                        onClick={() => {
-                            return props.showPrintPopup({
-                                serviceId: props.id,
-                                customerId: props.service.customers[0],
-                                deviceIds: props.service.devices,
-                                title: props.service.title,
-                                remark: props.service.remark,
-                                description: props.service.description,
-                                actions: props.service.actions,
-                                newDevices: props.service.newDevices
-                            });
-                        }} />
+                        onClick={() => props.showPrintPopup(service)} />
                 </div>
             </div>
         </StyledHistoryCard>

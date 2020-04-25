@@ -119,7 +119,7 @@ const ServiceForm = (props) => {
         selectedDropdownItems: {
             customer: props.isUpdate ? { label: props.service.customer.name, value: props.service.customer.id } : '',
             devices: props.isUpdate ? props.service.devices.map(device => {
-                return { label: device.deviceName, value: device.deviceId }
+                return { label: device.name, value: device.id }
             }) : '',
         }
     }
@@ -375,7 +375,6 @@ const ServiceForm = (props) => {
 
     const handleFormSubmit = async (event) => {
         event.preventDefault();
-        debugger;
         let inputValues = {};
         const emptyRequiredInputsCopy = { ...state.emptyRequiredInputs };
         for (const key of Object.keys(state.inputs)) {
@@ -402,11 +401,6 @@ const ServiceForm = (props) => {
                 }
             }
 
-            // Hack for converting an empty array to string - because Firebase is not supporting empty arrays
-            // if (input.isArray && Array.isArray(inputVal) && inputVal.length === 0) {
-            //     inputVal = '';
-            // }
-
             inputValues[key] = inputVal;            
         }
 
@@ -422,7 +416,6 @@ const ServiceForm = (props) => {
             context.showSnackbar('Required field(s) missing');
         } else {
             if (!props.isUpdate) {
-                // context.addService(inputValues, props.serviceId);
                 try {
                     await createServiceAPI({
                         serviceData: inputValues,
@@ -450,20 +443,19 @@ const ServiceForm = (props) => {
                     context.showSnackbar(err);
                 }
             } else {
-                // context.updateService(inputValues, props.service.id);
                 const updatedInputValues = {};
 
                 for ( const inputValueKey of Object.keys(inputValues) ) {
                     if ( inputValueKey === 'devices' ) {
                         updatedInputValues.devices = [];
-                        for ( const deviceId of inputValues['devices'] ) {
-                            updatedInputValues.devices.push(deviceId);
+                        for ( const device of inputValues['devices'] ) {
+                            updatedInputValues.devices.push(device.id);
                         }
                     } else if ( inputValueKey === 'actions' ) {
                         updatedInputValues.actions = [];
                         for ( const action of inputValues['actions'] ) {
                             updatedInputValues.actions.push({
-                                id: action.actionId,
+                                id: action.id,
                                 price: action.price,
                                 quantity: action.quantity
                             });
@@ -472,7 +464,7 @@ const ServiceForm = (props) => {
                         updatedInputValues.newDevices = [];
                         for ( const newDevice of inputValues['newDevices'] ) {
                             updatedInputValues.newDevices.push({
-                                id: newDevice.deviceId,
+                                id: newDevice.id,
                                 price: newDevice.price,
                                 quantity: newDevice.quantity
                             });
@@ -480,7 +472,9 @@ const ServiceForm = (props) => {
                     } else {
                         updatedInputValues[inputValueKey] = inputValues[inputValueKey];
                     }
-                }                
+                }   
+                
+                console.log(JSON.stringify(updatedInputValues));
                 
                 const updatedService = await updateServiceAPI({
                     token: context.token, 

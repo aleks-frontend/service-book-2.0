@@ -4,9 +4,9 @@ import { CSSTransition } from 'react-transition-group';
 import HistoryCard from './HistoryCard';
 import ServiceForm from './ServiceForm';
 import Controls from './UI/Controls';
-// import DeletePrompt from './UI/DeletePrompt';
+import DeletePrompt from './UI/DeletePrompt';
 import Popup from './UI/Popup';
-// import PrintPopup from './UI/PrintPopup';
+import PrintPopup from './UI/PrintPopup';
 import Legend from './UI/Legend';
 import GridBasic from './UI/GridBasic';
 import TopBar from './UI/TopBar';
@@ -24,42 +24,41 @@ const History = (props) => {
         showPopup: false,
         popupServiceId: '',
         searchText: '',
-        sortCriteria: '',
-        sortDirectionAsc: true,
-        promptedId: null,
+        sortCriteria: 'date',
+        sortDirection: 'desc',
+        deletedServiceId: null,
         showNoServiceMessage: false,
         showPrintPopup: false,
-        printInputs: {
-            customerId: [],
-            deviceIds: [],
-            title: '',
-            remark: ''
-        },
+        printedService: null,
         services: []
     });
 
     React.useEffect(() => {
-        // Had to make this as a separate function in order to be able to use `async`
-        // useEffect was not allowing to put async in it's callback function
-        const fetchServices = async () => {
-            const services = await getServicesAPI({
-                query: {
-                    page: 0,
-                    search: '',
-                    orderByColumn: 'date',
-                    orderDirection: 'desc'
-                },
-                token: context.token
-            });
-    
-            setState({ ...state, services });
-        }
-
         fetchServices();
     }, []);
 
+    const fetchServices = async ({ searchText, sortCriteria, sortDirection } = {}) => {
+        const services = await getServicesAPI({
+            query: {
+                page: 0,
+                search: searchText === undefined ? state.searchText : searchText,
+                orderByColumn: sortCriteria || state.sortCriteria,
+                orderDirection: sortDirection || state.sortDirection
+            },
+            token: context.token
+        });
+
+        setState({
+            ...state,
+            services,
+            searchText: searchText || state.searchText,
+            sortCriteria: sortCriteria || state.sortCriteria,
+            sortDirection: sortDirection || state.sortDirection
+        });
+    }
+
     const updateServices = (service) => {
-    
+
         const servicesStateCopy = [...state.services];
         // Getting the index of the updated service
         const indexToBeUpdated = servicesStateCopy.findIndex(serviceCopy => serviceCopy.id === service.id);
@@ -73,15 +72,30 @@ const History = (props) => {
         });
     };
 
-    /** Custom methods for updating the sortCriteria and promptedId states **/
+    const deleteService = (id) => {
+        const servicesStateCopy = [...state.services];
+        // Getting the index of the deleted service
+        const indexToBeDeleted = servicesStateCopy.findIndex(serviceCopy => serviceCopy._id === id);
+
+        servicesStateCopy.splice(indexToBeDeleted, 1);
+
+        setState({
+            ...state,
+            services: servicesStateCopy,
+            deletedServiceId: null,
+            showPopup: false
+        });
+    }
+
+    /** Custom methods for updating the sortCriteria and deletedServiceId states **/
     const updateSortCriteria = (value) => setState({
         ...state,
         sortCriteria: value
     });
 
-    const updatePromptedId = (value) => setState({
+    const updateDeletedServiceId = (value) => setState({
         ...state,
-        promptedId: value
+        deletedServiceId: value
     });
 
     /** Helper methods for hiding the showing the popup **/
@@ -96,20 +110,11 @@ const History = (props) => {
 
     /** Helper methods for hiding the showing the print popup **/
     const hidePrintPopup = () => setState({ ...state, showPrintPopup: false });
-    const showPrintPopup = ({ serviceId, customerId, deviceIds, title, actions, newDevices, remark, description }) => {
+    const showPrintPopup = (service) => {
         setState({
             ...state,
             showPrintPopup: true,
-            printInputs: {
-                serviceId,
-                customerId,
-                deviceIds,
-                title,
-                actions,
-                newDevices,
-                remark,
-                description
-            }
+            printedService: service
         });
     }
 
@@ -122,25 +127,17 @@ const History = (props) => {
         // Adding a setTimeout so the state is not updated on 
         // each key press event while the user is typing
         searchTimeout = setTimeout(() => {
-            setState({
-                ...state,
-                searchText: value
-            });
+            fetchServices({ searchText: value });
         }, 500);
     }
 
     const handleSortCriteriaChange = (value) => {
-        setState({
-            ...state,
-            sortCriteria: value
-        });
-    }
+        fetchServices({ sortCriteria: value })
+    };
 
     const handleSortDirectionClick = () => {
-        setState({
-            ...state,
-            sortDirectionAsc: !state.sortDirectionAsc
-        });
+        const direction = state.sortDirection === 'desc' ? 'asc' : 'desc';
+        fetchServices({ sortDirection: direction });
     }
 
     /** Render Methods **/
@@ -178,7 +175,7 @@ const History = (props) => {
                 key={service.id}
                 id={service.id}
                 service={service}
-                updatePromptedId={updatePromptedId}
+                updateDeletedServiceId={updateDeletedServiceId}
                 renderUpdateServicePopup={renderUpdateServicePopup}
                 showPopup={setShowPopup}
                 showPrintPopup={showPrintPopup}
@@ -186,15 +183,16 @@ const History = (props) => {
         </CSSTransition>
     );
 
-    // const renderDeletePrompt = () => {
-    //     if (state.promptedId) {
-    //         return (
-    //             <DeletePrompt
-    //                 id={state.promptedId}
-    //                 updatePromptedId={updatePromptedId}
-    //             />);
-    //     }
-    // }
+    const renderDeletePrompt = () => {
+        if (state.deletedServiceId) {
+            return (
+                <DeletePrompt
+                    id={state.deletedServiceId}
+                    updateDeletedServiceId={updateDeletedServiceId}
+                    deleteService={deleteService}
+                />);
+        }
+    }
 
     const renderUpdateServicePopup = () => {
         if (state.showPopup) {
@@ -213,29 +211,22 @@ const History = (props) => {
         }
     }
 
-    // const renderPrintPopup = () => {
-    //     if (state.showPrintPopup) {
-    //         return (
-    //             <Popup hidePopup={hidePrintPopup}>
-    //                 <PrintPopup
-    //                     serviceId={state.printInputs.serviceId}
-    //                     customerId={state.printInputs.customerId}
-    //                     deviceIds={state.printInputs.deviceIds}
-    //                     title={state.printInputs.title}
-    //                     actions={state.printInputs.actions}
-    //                     newDevices={state.printInputs.newDevices}
-    //                     remark={state.printInputs.remark}
-    //                     description={state.printInputs.description}
-    //                     hidePopup={hidePrintPopup}
-    //                 />
-    //             </Popup>
-    //         )
-    //     }
-    // }
+    const renderPrintPopup = () => {
+        if (state.showPrintPopup) {
+            return (
+                <Popup hidePopup={hidePrintPopup}>
+                    <PrintPopup
+                        service={state.printedService}
+                        hidePopup={hidePrintPopup}
+                    />
+                </Popup>
+            )
+        }
+    }
 
     return (
         <React.Fragment>
-            {/* {renderDeletePrompt()} */}
+            {renderDeletePrompt()}
             <TopBar>
                 <Legend />
                 <Controls
@@ -243,7 +234,7 @@ const History = (props) => {
                     handleSortCriteriaChange={handleSortCriteriaChange}
                     handleSortDirectionClick={handleSortDirectionClick}
                     updateSortCriteria={updateSortCriteria}
-                    sortDirectionAsc={state.sortDirectionAsc}
+                    sortDirection={state.sortDirection}
                 />
             </TopBar>
             {state.showNoServiceMessage && <FilterCriteriaEmpty>No service meets the filtered criteria!</FilterCriteriaEmpty>}
@@ -251,7 +242,7 @@ const History = (props) => {
                 {renderServices()}
             </GridBasic>
             {renderUpdateServicePopup()}
-            {/* {renderPrintPopup()} */}
+            {renderPrintPopup()}
         </React.Fragment>
     );
 }

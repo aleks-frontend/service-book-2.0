@@ -7,7 +7,7 @@ const StyledArrow = styled.div`
     height: 3.4rem;
     background: url('arrow-icon.png') no-repeat center;
     background-size: contain;
-    transform: rotate(${props => props.sortDirectionAsc ? '0deg' : '180deg'});
+    transform: rotate(${props => props.sortDirection === 'asc' ? '180deg' : '0deg'});
     transition: 0.3s all;
 
     &:hover { cursor: pointer; }
@@ -16,7 +16,7 @@ const StyledArrow = styled.div`
 const SortArrow = (props) => {
     return (
         <StyledArrow 
-            sortDirectionAsc={props.sortDirectionAsc} 
+            sortDirection={props.sortDirection} 
             onClick={props.handleSortDirectionClick} />
     );
 };

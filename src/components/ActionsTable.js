@@ -21,7 +21,7 @@ const ActionsTable = (props) => {
     /** State control methods **/
     const addActionRow = () => {
         const actionRow = {
-            actionId: "",
+            id: "",
             quantity: 1,
             price: 0
         };
@@ -32,7 +32,7 @@ const ActionsTable = (props) => {
         ]});
     }
 
-    const updateActionRowState = ({ rowId, value, key, price, actionName }) => {
+    const updateActionRowState = ({ rowId, value, key, price, name }) => {
         const actionRowsStateCopy = [ ...state.actionRows ];
         
         for ( const actionRowsStateCopyItem of actionRowsStateCopy ) {
@@ -42,7 +42,7 @@ const ActionsTable = (props) => {
                 // Preseting the price in this case
                 if ( price !== undefined ) {
                     actionRowsStateCopyItem.price = price;
-                    actionRowsStateCopyItem.actionName = actionName;
+                    actionRowsStateCopyItem.name = name;
                 }
                 break;
             }
@@ -56,7 +56,7 @@ const ActionsTable = (props) => {
 
     const validateAndSendToServiceForm = (actionRowsStateCopy) => {
         let validatedActionRows = actionRowsStateCopy.filter(actionRow => ( 
-            actionRow.actionId !== "" && actionRow.quantity !== "" && actionRow.price !== "" )
+            actionRow.id !== "" && actionRow.quantity !== "" && actionRow.price !== "" )
         );
 
         props.updateServiceFormActionsState(validatedActionRows);        
@@ -79,9 +79,9 @@ const ActionsTable = (props) => {
         updateActionRowState({ 
             rowId, 
             value, 
-            key: 'actionId', 
+            key: 'id', 
             price: action.price,
-            actionName: action.name
+            name: action.name
         });
         focusPriceInput(rowId);
     }
@@ -112,9 +112,9 @@ const ActionsTable = (props) => {
         updateActionRowState({ 
             rowId, 
             value: newAction._id,  
-            key: 'actionId',
+            key: 'id',
             price: 0,
-            actionName: newAction.name 
+            name: newAction.name 
         });
 
         focusPriceInput(rowId);
@@ -157,9 +157,9 @@ const ActionsTable = (props) => {
                         className="select"
                         autoFocus={true}
                         name={actionRow.rowId}
-                        value={actionRow.actionId !== '' ? {
-                            value: actionRow.actionId,
-                            label: actionRow.actionName
+                        value={actionRow.id !== '' ? {
+                            value: actionRow.id,
+                            label: actionRow.name
                         } : ''}
                         onChange={handleDropdownChange}
                         onCreateOption={handleCreateAction}

@@ -46,11 +46,10 @@ const Controls = (props) => {
                     }}
                 >
                     <option value="date">Date</option>
-                    <option value="customers">Customer Name</option>
-                    <option value="title">Service Title</option>
+                    <option value="customer">Customer Name</option>
                 </select>
                 <SortArrow 
-                    sortDirectionAsc={props.sortDirectionAsc}
+                    sortDirection={props.sortDirection}
                     handleSortDirectionClick={props.handleSortDirectionClick}     
                 />
             </div>

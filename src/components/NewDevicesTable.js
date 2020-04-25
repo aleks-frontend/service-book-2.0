@@ -17,8 +17,8 @@ const NewDevicesTable = (props) => {
     /** State control methods **/
     const addNewDeviceRow = (id, entity) => {
         const newDeviceRow = {
-            deviceId: id,
-            deviceName: entity.name,
+            id,
+            name: entity.name,
             quantity: 1,
             price: 0
         };
@@ -56,7 +56,7 @@ const NewDevicesTable = (props) => {
 
     const validateAndSendToServiceForm = (newDeviceRowsStateCopy) => {
         let validatedNewDeviceRows = newDeviceRowsStateCopy.filter(newDeviceRow => (
-            newDeviceRow.deviceId !== "" && newDeviceRow.quantity !== "" && newDeviceRow.price !== "")
+            newDeviceRow.id !== "" && newDeviceRow.quantity !== "" && newDeviceRow.price !== "")
         );
 
         props.updateServiceFormNewDevicesState(validatedNewDeviceRows);
@@ -113,10 +113,10 @@ const NewDevicesTable = (props) => {
                     <StyledTableCell col={1}>
                         <input
                             newdevicesrowid={newDeviceRow.rowId}
-                            value={newDeviceRow.deviceName}
+                            value={newDeviceRow.name}
                             // onChange={handleInputChange}
                             type="text"
-                            name="deviceId"
+                            name="id"
                             readOnly={true}
                         />
                     </StyledTableCell>

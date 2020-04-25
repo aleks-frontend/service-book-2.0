@@ -3,7 +3,7 @@ export default ({ token, query }) => {
         let url = `https://radiant-crag-38285.herokuapp.com/services?`;
         url += 'page=' + (query.page)
         url += '&search=' + (query.search)
-        url += '&orderByColumn=' + (query.orderBy || 'date')
+        url += '&orderByColumn=' + (query.orderByColumn || 'date')
         url += '&orderDirection=' + (query.orderDirection || 'desc');
 
         fetch(url, {
