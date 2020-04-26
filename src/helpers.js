@@ -167,3 +167,30 @@ export const svgIcons = {
 export const widths = {
     sidebar: '9rem'
 }
+
+export const legendItems = [
+    { 
+        statusColor: colors.yellow, 
+        statusEnum: statusEnum.RECEIVED, 
+        statusLabel: 'Received', 
+        statusIcon: svgIcons.received 
+    },
+    { 
+        statusColor: colors.orange, 
+        statusEnum: statusEnum.INPROGRESS, 
+        statusLabel: 'In Progress', 
+        statusIcon: svgIcons.inProgress 
+    },
+    { 
+        statusColor: colors.green, 
+        statusEnum: statusEnum.COMPLETED, 
+        statusLabel: 'Completed', 
+        statusIcon: svgIcons.completed 
+    },
+    { 
+        statusColor: colors.blue, 
+        statusEnum: statusEnum.SHIPPED, 
+        statusLabel: 'Shipped', 
+        statusIcon: svgIcons.shipped 
+    }
+];

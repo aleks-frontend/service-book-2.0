@@ -37,13 +37,15 @@ const History = (props) => {
         fetchServices();
     }, []);
 
-    const fetchServices = async ({ searchText, sortCriteria, sortDirection } = {}) => {
+    const fetchServices = async ({ searchText, sortCriteria, sortDirection, statusActiveFilters } = {}) => {
+        // Handle the loading spinner show logic here
         const services = await getServicesAPI({
             query: {
                 page: 0,
                 search: searchText === undefined ? state.searchText : searchText,
                 orderByColumn: sortCriteria || state.sortCriteria,
-                orderDirection: sortDirection || state.sortDirection
+                orderDirection: sortDirection || state.sortDirection,
+                statusActiveFilters: statusActiveFilters || context.statusActiveFilters
             },
             token: context.token
         });
@@ -228,7 +230,7 @@ const History = (props) => {
         <React.Fragment>
             {renderDeletePrompt()}
             <TopBar>
-                <Legend />
+                <Legend fetchServices={fetchServices} />
                 <Controls
                     handleSearchInputChange={handleSearchInputChange}
                     handleSortCriteriaChange={handleSortCriteriaChange}

@@ -55,7 +55,6 @@ const AppProvider = (props) => {
 
     const setStatusActiveFilters = ({ values, reset }) => {
         let activeFiltersCopy = reset ? values : [...state.statusActiveFilters];
-        console.log(activeFiltersCopy);
         
         if ( !reset ) {            
             for ( const value of values ) {
@@ -71,6 +70,8 @@ const AppProvider = (props) => {
             ...state,
             statusActiveFilters: activeFiltersCopy
         });
+
+        return activeFiltersCopy;
     }
 
     return (

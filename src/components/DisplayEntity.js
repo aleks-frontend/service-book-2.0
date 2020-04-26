@@ -54,7 +54,7 @@ const DisplayEntity = (props) => {
                 await deleteEntityAPI({ id: oldData._id, token: context.token, entityName: props.name })
                 context.showSnackbar(`${props.entityLabel.toLowerCase()} was deleted (${oldData.name})`);
               } catch(err) {
-                context.showSnackbar(`delete action failed`);
+                context.showSnackbar(err);
               }
               
             },

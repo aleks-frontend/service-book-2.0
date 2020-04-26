@@ -4,7 +4,8 @@ export default ({ token, query }) => {
         url += 'page=' + (query.page)
         url += '&search=' + (query.search)
         url += '&orderByColumn=' + (query.orderByColumn || 'date')
-        url += '&orderDirection=' + (query.orderDirection || 'desc');
+        url += '&orderDirection=' + (query.orderDirection || 'desc')
+        url += '&status=' + (query.statusActiveFilters.join(',') || '');
 
         fetch(url, {
             method: 'GET',

@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { AppContext } from '../AppProvider';
-import { statusEnum, colors, svgIcons } from '../../helpers';
+import { colors, legendItems } from '../../helpers';
 
 const StyledLegend = styled.div`
     display: flex;
@@ -41,43 +41,32 @@ const StyledLegendItem = styled.div`
         transition: 0.3s all; }
 `;
 
-const Legend = () => {    
-    const context = React.useContext(AppContext);
+const Legend = (props) => {
+    const context = React.useContext(AppContext);    
+
+    const renderLegendItems = () => {
+        return legendItems.map(legendItem => {
+            const { statusColor, statusEnum, statusLabel, statusIcon } = legendItem;
+
+            return (
+                <StyledLegendItem
+                    color={statusColor}
+                    selected={context.statusActiveFilters.includes(statusEnum)}
+                    onClick={() => {
+                        const statusActiveFilters = context.setStatusActiveFilters({ values: [statusEnum] });
+                        props.fetchServices({ statusActiveFilters })
+                    }}
+                >
+                    <div className="legend__indicator" dangerouslySetInnerHTML={{ __html: statusIcon }}></div>
+                    <div className="legend__label">{statusLabel}</div>
+                </StyledLegendItem>
+            )
+        });
+    }
 
     return (
         <StyledLegend>
-            <StyledLegendItem 
-                colors={colors}
-                color={colors.yellow}
-                selected={context.statusActiveFilters.includes(statusEnum.RECEIVED)}
-                onClick={() => context.setStatusActiveFilters({ values: [statusEnum.RECEIVED] })}>
-                <div className="legend__indicator" dangerouslySetInnerHTML={{ __html: svgIcons.received }}></div>
-                <div className="legend__label">Received</div>
-            </StyledLegendItem>
-            <StyledLegendItem 
-                colors={colors}
-                color={colors.orange}
-                selected={context.statusActiveFilters.includes(statusEnum.INPROGRESS)}
-                onClick={() => context.setStatusActiveFilters({ values: [statusEnum.INPROGRESS] })}>
-                <div className="legend__indicator" dangerouslySetInnerHTML={{ __html: svgIcons.inProgress }}></div>
-                <div className="legend__label">In Progress</div>
-            </StyledLegendItem>
-            <StyledLegendItem 
-                colors={colors}
-                color={colors.green}
-                selected={context.statusActiveFilters.includes(statusEnum.COMPLETED)}
-                onClick={() => context.setStatusActiveFilters({ values: [statusEnum.COMPLETED] })}>
-                <div className="legend__indicator" dangerouslySetInnerHTML={{ __html: svgIcons.completed }}></div>
-                <div className="legend__label">Completed</div>
-            </StyledLegendItem>
-            <StyledLegendItem 
-                colors={colors}
-                color={colors.blue}
-                selected={context.statusActiveFilters.includes(statusEnum.SHIPPED)}
-                onClick={() => context.setStatusActiveFilters({ values: [statusEnum.SHIPPED] })}>
-                <div className="legend__indicator" dangerouslySetInnerHTML={{ __html: svgIcons.shipped }}></div>
-                <div className="legend__label">Shipped</div>
-            </StyledLegendItem>
+            {renderLegendItems()}
         </StyledLegend>
     );
 };
