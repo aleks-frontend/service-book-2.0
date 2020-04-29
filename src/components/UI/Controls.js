@@ -1,6 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import SortArrow from './SortArrow';
+
+import { AppContext } from '../AppProvider';
 import { colors } from '../../helpers';
 
 const StyledControls = styled.div`
@@ -23,11 +25,14 @@ const StyledControls = styled.div`
 
     input[type="text"] {
         padding: 0 0.5rem;
+        width: 25rem;
         border-radius: 0.3rem;
         border: 1px solid ${colors.lightgray}; }
 `;
 
 const Controls = (props) => {
+    const context = React.useContext(AppContext);
+
     React.useEffect(() => {        
         props.updateSortCriteria(sortInputRef.current.value);
     }, []);
@@ -37,6 +42,13 @@ const Controls = (props) => {
 
     return (
         <StyledControls>
+            <input 
+                type="text" 
+                placeholder="Search" 
+                ref={filterInputRef} 
+                defaultValue={context.filters.searchText}
+                onChange={() => props.handleSearchInputChange(filterInputRef.current.value)} 
+            />
             <div className="sort">
                 <label>Sort by: </label>
                 <select 
@@ -44,21 +56,16 @@ const Controls = (props) => {
                     onChange={() => {
                         props.handleSortCriteriaChange(sortInputRef.current.value)
                     }}
+                    defaultValue={context.filters.sortCriteria}
                 >
                     <option value="date">Date</option>
                     <option value="customer">Customer Name</option>
                 </select>
                 <SortArrow 
-                    sortDirection={props.sortDirection}
+                    sortDirection={context.filters.sortDirection}
                     handleSortDirectionClick={props.handleSortDirectionClick}     
                 />
-            </div>
-            <input 
-                type="text" 
-                placeholder="Filter" 
-                ref={filterInputRef} 
-                onChange={() => props.handleSearchInputChange(filterInputRef.current.value)} 
-            />
+            </div>            
         </StyledControls>
     );
 };
