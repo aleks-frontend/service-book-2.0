@@ -42,19 +42,27 @@ const StyledLegendItem = styled.div`
 `;
 
 const Legend = (props) => {
-    const context = React.useContext(AppContext);    
+    const context = React.useContext(AppContext);
 
     const renderLegendItems = () => {
-        return legendItems.map(legendItem => {
+        return legendItems.map((legendItem, index) => {
             const { statusColor, statusEnum, statusLabel, statusIcon } = legendItem;
 
             return (
                 <StyledLegendItem
+                    key={index}
                     color={statusColor}
-                    selected={context.statusActiveFilters.includes(statusEnum)}
+                    selected={context.filters.status.includes(statusEnum)}
                     onClick={() => {
-                        const statusActiveFilters = context.setStatusActiveFilters({ values: [statusEnum] });
-                        props.fetchServices({ statusActiveFilters })
+                        let statusFilters = context.filters.status;
+                        if (statusFilters.includes(statusEnum)) {
+                            statusFilters = statusFilters.filter(status => (status !== statusEnum));
+                        } else {
+                            statusFilters.push(statusEnum);
+                        }
+
+                        const activeFilters = context.setFilters({ status: statusFilters });
+                        props.fetchServices(activeFilters);
                     }}
                 >
                     <div className="legend__indicator" dangerouslySetInnerHTML={{ __html: statusIcon }}></div>

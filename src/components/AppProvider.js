@@ -2,9 +2,14 @@ import React from 'react';
 
 // make a context
 const AppContext = React.createContext();
-
-
 const AppProvider = (props) => {
+    const defaultFilters = {
+        status: [],
+        searchText: '',
+        sortDirection: 'desc',
+        sortCriteria: 'date'
+    };
+
     const [state, setState] = React.useState({
         userStatus: 'logged-out',
         token: '',
@@ -14,6 +19,7 @@ const AppProvider = (props) => {
         snackbarEntity: '',
         snackbarAction: '',
         statusActiveFilters: [],
+        filters: defaultFilters
     });
 
     const setUserInfo = ({ userStatus, token, user }) => {
@@ -53,25 +59,11 @@ const AppProvider = (props) => {
         });
     }
 
-    const setStatusActiveFilters = ({ values, reset }) => {
-        let activeFiltersCopy = reset ? values : [...state.statusActiveFilters];
-        
-        if ( !reset ) {            
-            for ( const value of values ) {
-                if (activeFiltersCopy.includes(value)) {
-                    activeFiltersCopy = activeFiltersCopy.filter(status => (status !== value));
-                } else {
-                    activeFiltersCopy.push(value);
-                }
-            }
-        }
-        
-        setState({
-            ...state,
-            statusActiveFilters: activeFiltersCopy
-        });
+    const setFilters = (filters = {}, resetRest = false) => {
+        let mergedFilters = resetRest ? { ...defaultFilters, ...filters } : { ...state.filters, ...filters };
 
-        return activeFiltersCopy;
+        setState({ ...state, filters: mergedFilters });
+        return mergedFilters;
     }
 
     return (
@@ -86,8 +78,8 @@ const AppProvider = (props) => {
             snackbarMessage: state.snackbarMessage,
             showSnackbar,
             hideSnackbar,
-            statusActiveFilters: state.statusActiveFilters,
-            setStatusActiveFilters,
+            filters: state.filters,
+            setFilters,
         }}>
             {props.children}
         </AppContext.Provider>

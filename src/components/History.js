@@ -23,9 +23,6 @@ const History = (props) => {
         loaded: false,
         showPopup: false,
         popupServiceId: '',
-        searchText: '',
-        sortCriteria: 'date',
-        sortDirection: 'desc',
         deletedServiceId: null,
         showNoServiceMessage: false,
         showPrintPopup: false,
@@ -37,15 +34,20 @@ const History = (props) => {
         fetchServices();
     }, []);
 
-    const fetchServices = async ({ searchText, sortCriteria, sortDirection, statusActiveFilters } = {}) => {
+    const fetchServices = async ({ searchText, sortCriteria, sortDirection, status } = {}) => {
         // Handle the loading spinner show logic here
+        setState({
+            ...state,
+            loaded: false
+        });
+        
         const services = await getServicesAPI({
             query: {
                 page: 0,
-                search: searchText === undefined ? state.searchText : searchText,
-                orderByColumn: sortCriteria || state.sortCriteria,
-                orderDirection: sortDirection || state.sortDirection,
-                statusActiveFilters: statusActiveFilters || context.statusActiveFilters
+                search: searchText === undefined ? context.filters.searchText : searchText,
+                orderByColumn: sortCriteria || context.filters.sortCriteria,
+                orderDirection: sortDirection || context.filters.sortDirection,
+                statusActiveFilters: status || context.filters.status
             },
             token: context.token
         });
@@ -53,9 +55,7 @@ const History = (props) => {
         setState({
             ...state,
             services,
-            searchText: searchText || state.searchText,
-            sortCriteria: sortCriteria || state.sortCriteria,
-            sortDirection: sortDirection || state.sortDirection
+            loaded: true
         });
     }
 
@@ -129,17 +129,20 @@ const History = (props) => {
         // Adding a setTimeout so the state is not updated on 
         // each key press event while the user is typing
         searchTimeout = setTimeout(() => {
-            fetchServices({ searchText: value });
+            const activeFilters = context.setFilters({ searchText: value });
+            fetchServices(activeFilters)
         }, 500);
     }
 
     const handleSortCriteriaChange = (value) => {
-        fetchServices({ sortCriteria: value })
+        const activeFilters = context.setFilters({ sortCriteria: value });
+        fetchServices(activeFilters)
     };
 
     const handleSortDirectionClick = () => {
-        const direction = state.sortDirection === 'desc' ? 'asc' : 'desc';
-        fetchServices({ sortDirection: direction });
+        const direction = context.filters.sortDirection === 'desc' ? 'asc' : 'desc';
+        const activeFilters = context.setFilters({ sortDirection: direction });
+        fetchServices(activeFilters)
     }
 
     /** Render Methods **/
@@ -236,7 +239,6 @@ const History = (props) => {
                     handleSortCriteriaChange={handleSortCriteriaChange}
                     handleSortDirectionClick={handleSortDirectionClick}
                     updateSortCriteria={updateSortCriteria}
-                    sortDirection={state.sortDirection}
                 />
             </TopBar>
             {state.showNoServiceMessage && <FilterCriteriaEmpty>No service meets the filtered criteria!</FilterCriteriaEmpty>}
