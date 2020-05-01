@@ -10,6 +10,7 @@ import PrintPopup from './UI/PrintPopup';
 import Legend from './UI/Legend';
 import GridBasic from './UI/GridBasic';
 import TopBar from './UI/TopBar';
+import LoadingSpinner from './UI/LoadingSpinner';
 import FilterCriteriaEmpty from './UI/FilterCriteriaEmpty';
 import { AppContext } from './AppProvider';
 import getServicesAPI from '../API/getServices';
@@ -37,11 +38,8 @@ const History = (props) => {
 
     const fetchServices = async ({ searchText, sortCriteria, sortDirection, status } = {}) => {
         // Handle the loading spinner show logic here
-        setState({
-            ...state,
-            loaded: false
-        });
-        
+        setState({ ...state, loaded: false });
+
         const services = await getServicesAPI({
             query: {
                 page: 0,
@@ -244,7 +242,7 @@ const History = (props) => {
             </TopBar>
             {state.showNoServiceMessage && <FilterCriteriaEmpty>No service meets the filtered criteria!</FilterCriteriaEmpty>}
             <GridBasic>
-                {renderServices()}
+                {state.loaded ? renderServices() : <LoadingSpinner />}
             </GridBasic>
             {renderUpdateServicePopup()}
             {renderPrintPopup()}
