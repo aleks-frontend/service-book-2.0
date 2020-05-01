@@ -13,7 +13,6 @@ import Side from './UI/Side';
 import Nav from './UI/Nav';
 import Header from './UI/Header';
 import Content from './UI/Content';
-import NewService from './NewService';
 import History from './History';
 import Profile from './Profile';
 import Entities from './Entities';
