@@ -60,9 +60,15 @@ const AppProvider = (props) => {
     }
 
     const setFilters = (filters = {}, resetRest = false) => {
-        let mergedFilters = resetRest ? { ...defaultFilters, ...filters } : { ...state.filters, ...filters };
+        const mergedFilters = resetRest ? { ...defaultFilters, ...filters } : { ...state.filters, ...filters };
+        // Changing the activePage (active nav item) when we are clicking the thumbnail on homepage 
+        // and redirecting to history
+        const activePage = resetRest ? 'history' : state.activePage;
 
-        setState({ ...state, filters: mergedFilters });
+        setState({ ...state, 
+            filters: mergedFilters,
+            activePage
+        });
         return mergedFilters;
     }
 

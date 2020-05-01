@@ -31,7 +31,8 @@ const History = (props) => {
     });
 
     React.useEffect(() => {
-        fetchServices();
+        // Using props.historyFilters for the case when we are redirecting from the homepage (thumbnail click)
+        fetchServices(props.historyFilters);
     }, []);
 
     const fetchServices = async ({ searchText, sortCriteria, sortDirection, status } = {}) => {
