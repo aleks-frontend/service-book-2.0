@@ -224,12 +224,13 @@ const Home = (props) => {
             }
         ];
 
-        return thumbnailsInfo.map(thumbnail => {
+        return thumbnailsInfo.map((thumbnail, index) => {
             const { statusEnum, header, servicesCount, svgIcon, label } = thumbnail;
             return (
                 <div
                     className="cell cell--clickable"
                     onClick={() => goToFilteredServices(statusEnum)}
+                    key={index}
                 >
                     <div className="header">{header}</div>
                     <div className="body">
