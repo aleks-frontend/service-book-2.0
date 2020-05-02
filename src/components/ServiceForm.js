@@ -8,7 +8,6 @@ import CreateEntity from './CreateEntity';
 import ActionsTable from './ActionsTable';
 import NewDevicesTable from './NewDevicesTable';
 import Button from './UI/Button';
-import PrintButton from './PrintButton';
 import LoadingSpinner from './UI/LoadingSpinner';
 import PdfDispatchNote from './PDF/PdfDispatchNote';
 import { AppContext } from './AppProvider';
@@ -616,12 +615,6 @@ const ServiceForm = (props) => {
         }
     }
 
-
-    const renderTest = () => {
-        console.log('service form renderer');
-        return '';
-    }
-
     const downloadPDF = () => {
         if (state.pdfGenerated) {
             const data = window.URL.createObjectURL(state.pdfBlob);
@@ -769,7 +762,6 @@ const ServiceForm = (props) => {
                     {props.isUpdate ? 'Update' : 'Create'}
                 </Button>
                 {renderCancelButton()}
-                {renderTest()}
                 {renderResetButton()}
                 {renderDownloadPdfButton()}
             </StyledForm>
