@@ -178,7 +178,7 @@ const NewDevicesTable = (props) => {
                         entityLabel="device"
                         fields={props.fields}
                         isNewDevice={true}
-                        showSnackbar={props.showSnackbar}
+                        showSnackbar={context.showSnackbar}
                         hidePopup={hidePopup}
                     />
                 </Popup>

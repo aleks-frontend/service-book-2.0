@@ -12,7 +12,8 @@ export default ({ serviceData, token }) => {
         });
 
         if (response.status === 200) {
-            resolve();
+            const result = await response.json();
+            resolve(result);
         } else {
             const error = await response.text();
             reject(error);

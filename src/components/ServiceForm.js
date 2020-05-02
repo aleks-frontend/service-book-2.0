@@ -2,19 +2,22 @@ import React from 'react';
 import styled from 'styled-components';
 import CreatableSelect from 'react-select/async-creatable';
 
-// import { PDFDownloadLink } from '@react-pdf/renderer';
+import { PDFDownloadLink } from '@react-pdf/renderer';
 
 import CreateEntity from './CreateEntity';
 import ActionsTable from './ActionsTable';
 import NewDevicesTable from './NewDevicesTable';
 import Button from './UI/Button';
-// import PdfDispatchNote from './PDF/PdfDispatchNote';
+import PrintButton from './PrintButton';
+import LoadingSpinner from './UI/LoadingSpinner';
+import PdfDispatchNote from './PDF/PdfDispatchNote';
 import { AppContext } from './AppProvider';
 import { breakpoints, statusEnum, colors, fields } from '../helpers';
 
 import createServiceAPI from '../API/createService';
 import getEntitiesAPI from '../API/getEntities';
 import updateServiceAPI from '../API/updateService';
+import getEntityByIdAPI from '../API/getEntityById';
 
 const StyledForm = styled.form`
     position: relative;
@@ -133,13 +136,11 @@ const ServiceForm = (props) => {
         inputs: defaultStates.inputs,
         selectedDropdownItems: defaultStates.selectedDropdownItems,
         emptyRequiredInputs: {},
-        // dropdownOptions: {
-        //     customer: defaultStates.customerOptionsArr,
-        //     devices: defaultStates.deviceOptionsArr,
-        //     actions: defaultStates.actionOptionsArr
-        // },
         showGeneratedPdfButton: false,
-        tempInputs: {}
+        tempInputs: {},
+        dispatchNoteTriggered: false,
+        pdfBlob: null,
+        pdfGenerated: false
     });
 
     /** Helpper method for updating the state **/
@@ -198,9 +199,9 @@ const ServiceForm = (props) => {
     /** Helper method for hiding the Create Entity Form **/
     const hideCreateEntityForm = (entityType, stateCopy) => {
         return updateState({
-            stateKey: 'showCreateEntity', 
-            stateObjKey: entityType, 
-            value: { show: false }, 
+            stateKey: 'showCreateEntity',
+            stateObjKey: entityType,
+            value: { show: false },
             stateObjCopy: stateCopy
         })
     };
@@ -401,14 +402,14 @@ const ServiceForm = (props) => {
                 }
             }
 
-            inputValues[key] = inputVal;            
+            inputValues[key] = inputVal;
         }
 
         let stateCopy = { ...state };
         updateState({
-            stateKey: 'emptyRequiredInputs', 
-            stateObjKey: null, 
-            value: emptyRequiredInputsCopy, 
+            stateKey: 'emptyRequiredInputs',
+            stateObjKey: null,
+            value: emptyRequiredInputsCopy,
             stateObjCopy: stateCopy
         });
         if (Object.keys(emptyRequiredInputsCopy).length) {
@@ -417,52 +418,75 @@ const ServiceForm = (props) => {
         } else {
             if (!props.isUpdate) {
                 try {
-                    await createServiceAPI({
+                    const service = await createServiceAPI({
                         serviceData: inputValues,
                         token: context.token
                     });
+
+                    // Adding new service to the state, so we can pass it to PDF Dispatch note
+                    updateState({
+                        stateKey: 'service',
+                        stateObjKey: null,
+                        value: service,
+                        stateObjCopy: stateCopy
+                    });
+
+                    // Adding new service customer to the state, so we can pass it to PDF Dispatch note
+                    const customer = getEntityByIdAPI({
+                        token: context.token,
+                        entityName: 'customers',
+                        id: service.customer.id,
+                        async: false
+                    });
+
+                    updateState({
+                        stateKey: 'customer',
+                        stateObjKey: null,
+                        value: customer,
+                        stateObjCopy: stateCopy
+                    });
                     // Showing the 'Generate PDF' button
                     updateState({
-                        stateKey: 'showGeneratedPdfButton', 
-                        stateObjKey: null, 
-                        value: true, 
+                        stateKey: 'showGeneratedPdfButton',
+                        stateObjKey: null,
+                        value: true,
                         stateObjCopy: stateCopy
                     });
                     // Saving current inputs from the stateCopy to 'tempInputs' state
                     // cause 'inputs' state will be reset before the PDF is generated
                     // so we temporary store it here and pass this data to PdfDispatchNote 
                     updateState({
-                        stateKey: 'tempInputs', 
-                        stateObjKey: null, 
-                        value: stateCopy['inputs'], 
+                        stateKey: 'tempInputs',
+                        stateObjKey: null,
+                        value: stateCopy['inputs'],
                         stateObjCopy: stateCopy
                     });
-                    setState(stateCopy);
                     context.showSnackbar('new service was created successfully');
+                    setState(stateCopy);
                 } catch (err) {
                     context.showSnackbar(err);
                 }
             } else {
                 const updatedInputValues = {};
 
-                for ( const inputValueKey of Object.keys(inputValues) ) {
-                    if ( inputValueKey === 'devices' ) {
+                for (const inputValueKey of Object.keys(inputValues)) {
+                    if (inputValueKey === 'devices') {
                         updatedInputValues.devices = [];
-                        for ( const device of inputValues['devices'] ) {
+                        for (const device of inputValues['devices']) {
                             updatedInputValues.devices.push(device.id);
                         }
-                    } else if ( inputValueKey === 'actions' ) {
+                    } else if (inputValueKey === 'actions') {
                         updatedInputValues.actions = [];
-                        for ( const action of inputValues['actions'] ) {
+                        for (const action of inputValues['actions']) {
                             updatedInputValues.actions.push({
                                 id: action.id,
                                 price: action.price,
                                 quantity: action.quantity
                             });
                         }
-                    } else if ( inputValueKey === 'newDevices' ) {
+                    } else if (inputValueKey === 'newDevices') {
                         updatedInputValues.newDevices = [];
-                        for ( const newDevice of inputValues['newDevices'] ) {
+                        for (const newDevice of inputValues['newDevices']) {
                             updatedInputValues.newDevices.push({
                                 id: newDevice.id,
                                 price: newDevice.price,
@@ -472,32 +496,18 @@ const ServiceForm = (props) => {
                     } else {
                         updatedInputValues[inputValueKey] = inputValues[inputValueKey];
                     }
-                }   
-                
-                console.log(JSON.stringify(updatedInputValues));
-                
+                }
+
                 const updatedService = await updateServiceAPI({
-                    token: context.token, 
-                    inputValues: updatedInputValues, 
+                    token: context.token,
+                    inputValues: updatedInputValues,
                     id: props.service._id
                 });
 
                 // update History state here !!!
                 props.updateHistoryStateServices(updatedService);
                 context.showSnackbar('Service updated');
-            }            
-        }
-    }
-
-    const downloadPDF = () => {
-        if (state.pdfGenerated) {
-            const data = window.URL.createObjectURL(state.pdfBlob);
-            const link = document.createElement('a');
-            link.href = data;
-            link.download = `dispatch-note-${props.serviceId}.pdf`;
-            link.click();
-
-            formReset();
+            }
         }
     }
 
@@ -553,7 +563,6 @@ const ServiceForm = (props) => {
                             fields={fields.devices}
                             newDevices={state.inputs.newDevices.value}
                             updateServiceFormNewDevicesState={updateNewDevicesState}
-                            showSnackbar={props.showSnackbar}
                         />
                     </div>
                     <div className="group">
@@ -607,6 +616,24 @@ const ServiceForm = (props) => {
         }
     }
 
+
+    const renderTest = () => {
+        console.log('service form renderer');
+        return '';
+    }
+
+    const downloadPDF = () => {
+        if (state.pdfGenerated) {
+            const data = window.URL.createObjectURL(state.pdfBlob);
+            const link = document.createElement('a');
+            link.href = data;
+            link.download = `dispatch-note-${state.service.id}.pdf`;
+            link.click();
+
+            formReset();
+        }
+    };
+
     const renderDownloadPdfButton = () => {
         if (state.showGeneratedPdfButton) {
             return (
@@ -614,35 +641,29 @@ const ServiceForm = (props) => {
                     <Button
                         type="button"
                         margin="0 0 0 0.5rem"
-                        onClick={downloadPDF}
                         disabled={!state.pdfGenerated}
+                        onClick={downloadPDF}
                     >
-                        {state.pdfGenerated ? 'Download PDF' : 'Generating PDF...'}
+                        {state.pdfGenerated ? 'Download PDF' : 'Generating PDF'}
                     </Button>
-                    {/* <PDFDownloadLink
-                        document={<PdfDispatchNote
-                            customerId={state.tempInputs.customer.value}
-                            deviceIds={state.tempInputs.devices.value}
-                            description={state.tempInputs.description.value}
-                            serviceId={props.serviceId}
-                            // For some reason 'useContext()' is not working in PDFDispatchNote
-                            // So, we are passing these two methods as props
-                            getCustomerObjById={context.getCustomerObjById}
-                            getDeviceNameById={context.getDeviceNameById}
-                            getDeviceSerialById={context.getDeviceSerialById}
+                    <PDFDownloadLink document={
+                        <PdfDispatchNote
+                            service={state.service}
+                            customer={state.customer}
                         />}
-                        fileName={`dispatch-note-${props.serviceId}.pdf`}
                     >
-                        {({ loading, blob }) => {
+                        {({ blob, loading }) => {
                             if (!loading && !state.pdfGenerated) {
-                                setState({
-                                    ...state,
-                                    pdfBlob: blob,
-                                    pdfGenerated: true
-                                });
+                                setTimeout(() => {
+                                    setState({
+                                        ...state,
+                                        pdfBlob: blob,
+                                        pdfGenerated: true
+                                    });
+                                }, 0);
                             }
                         }}
-                    </PDFDownloadLink> */}
+                    </PDFDownloadLink>
                 </React.Fragment>
             )
         }
@@ -748,8 +769,9 @@ const ServiceForm = (props) => {
                     {props.isUpdate ? 'Update' : 'Create'}
                 </Button>
                 {renderCancelButton()}
-                {/* {renderDownloadPdfButton()} */}
+                {renderTest()}
                 {renderResetButton()}
+                {renderDownloadPdfButton()}
             </StyledForm>
         </React.Fragment>
     );

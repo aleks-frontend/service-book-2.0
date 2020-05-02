@@ -37,7 +37,7 @@ const History = (props) => {
     }, []);
 
     const fetchServices = async ({ searchText, sortCriteria, sortDirection, status } = {}) => {
-        // Handle the loading spinner show logic here
+        // Setting the loaded state to false to show the loading spinner
         setState({ ...state, loaded: false });
 
         const services = await getServicesAPI({

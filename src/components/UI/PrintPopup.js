@@ -90,7 +90,7 @@ const PrintPopup = (props) => {
                 }}
             </BlobProvider>
         )
-    }
+    };
 
     return (
         <StyledPrintPopup onClick={(e) => e.stopPropagation()}>
