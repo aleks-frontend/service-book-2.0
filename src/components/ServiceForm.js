@@ -647,6 +647,8 @@ const ServiceForm = (props) => {
                     >
                         {({ blob, loading }) => {
                             if (!loading && !state.pdfGenerated) {
+                                // setTimeout is needed because of some warning in react@16.13.1
+                                // Some confilct with @react-pdf/renderer@1.6.8
                                 setTimeout(() => {
                                     setState({
                                         ...state,

@@ -82,7 +82,11 @@ const PrintPopup = (props) => {
                         link.href = data;
                         link.download = `${fileName}-${service.id}.pdf`;
                         link.click();
-                        props.hidePopup();
+                        // setTimeout is needed because of some warning in react@16.13.1
+                        // Some confilct with @react-pdf/renderer@1.6.8
+                        setTimeout(() => {
+                            props.hidePopup();
+                        }, 0);
                         return <div></div>;
                     } else {
                         return <LoadingSpinner />;
