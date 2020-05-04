@@ -35,9 +35,9 @@ const Register = () => {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    email: "cs.elod@gmail.com",
-                    name: "Elooood",
-                    password: "123",
+                    email: state.email,
+                    name: state.name,
+                    password: state.password,
                 })
             });
         } catch(err) {
