@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import CreatableSelect from 'react-select/async-creatable';
 
-import { PDFDownloadLink } from '@react-pdf/renderer';
+import { BlobProvider } from '@react-pdf/renderer';
 
 import CreateEntity from './CreateEntity';
 import ActionsTable from './ActionsTable';
@@ -138,8 +138,7 @@ const ServiceForm = (props) => {
         showGeneratedPdfButton: false,
         tempInputs: {},
         dispatchNoteTriggered: false,
-        pdfBlob: null,
-        pdfGenerated: false
+        generatePDF: false
     });
 
     /** Helpper method for updating the state **/
@@ -228,7 +227,7 @@ const ServiceForm = (props) => {
             stateObjCopy: stateCopy
         });
         updateState({
-            stateKey: 'pdfGenerated',
+            stateKey: 'generatePDF',
             stateObjKey: null,
             value: false,
             stateObjCopy: stateCopy
@@ -430,20 +429,6 @@ const ServiceForm = (props) => {
                         stateObjCopy: stateCopy
                     });
 
-                    // Adding new service customer to the state, so we can pass it to PDF Dispatch note
-                    const customer = getEntityByIdAPI({
-                        token: context.token,
-                        entityName: 'customers',
-                        id: service.customer.id,
-                        async: false
-                    });
-
-                    updateState({
-                        stateKey: 'customer',
-                        stateObjKey: null,
-                        value: customer,
-                        stateObjCopy: stateCopy
-                    });
                     // Showing the 'Generate PDF' button
                     updateState({
                         stateKey: 'showGeneratedPdfButton',
@@ -615,16 +600,14 @@ const ServiceForm = (props) => {
         }
     }
 
-    const downloadPDF = () => {
-        if (state.pdfGenerated) {
-            const data = window.URL.createObjectURL(state.pdfBlob);
-            const link = document.createElement('a');
-            link.href = data;
-            link.download = `dispatch-note-${state.service.id}.pdf`;
-            link.click();
+    const downloadPDF = (blob) => {
+        const data = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = data;
+        link.download = `dispatch-note-${state.service.id}.pdf`;
+        link.click();
 
-            formReset();
-        }
+        formReset();
     };
 
     const renderDownloadPdfButton = () => {
@@ -634,31 +617,43 @@ const ServiceForm = (props) => {
                     <Button
                         type="button"
                         margin="0 0 0 0.5rem"
-                        disabled={!state.pdfGenerated}
-                        onClick={downloadPDF}
+                        // Button needs to be disabled until the snackBar is hidden
+                        disabled={state.generatePDF || context.snackbarVisible}
+                        onClick={() => {
+                            // Adding new service customer to the state, so we can pass it to PDF Dispatch note
+                            const customer = getEntityByIdAPI({
+                                token: context.token,
+                                entityName: 'customers',
+                                id: state.service.customer.id,
+                                async: false
+                            });
+
+                            setState({
+                                ...state,
+                                generatePDF: true,
+                                customer
+                            })
+                        }}
                     >
-                        {state.pdfGenerated ? 'Download PDF' : 'Generating PDF'}
+                        Download PDF
                     </Button>
-                    <PDFDownloadLink document={
+                    {state.generatePDF && <BlobProvider document={
                         <PdfDispatchNote
                             service={state.service}
                             customer={state.customer}
                         />}
                     >
                         {({ blob, loading }) => {
-                            if (!loading && !state.pdfGenerated) {
+                            if (!loading && state.generatePDF) {
                                 // setTimeout is needed because of some warning in react@16.13.1
                                 // Some confilct with @react-pdf/renderer@1.6.8
                                 setTimeout(() => {
-                                    setState({
-                                        ...state,
-                                        pdfBlob: blob,
-                                        pdfGenerated: true
-                                    });
+                                    downloadPDF(blob);
                                 }, 0);
                             }
+                            return '';
                         }}
-                    </PDFDownloadLink>
+                    </BlobProvider>}
                 </React.Fragment>
             )
         }
