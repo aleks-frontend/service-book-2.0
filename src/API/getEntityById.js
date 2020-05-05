@@ -1,5 +1,7 @@
+import { endpointUrl } from '../helpers';
+
 export default ({ token, entityName, id, async = true }) => {
-    const url = `https://radiant-crag-38285.herokuapp.com/${entityName}/${id}`;
+    const url = `${endpointUrl}/${entityName}/${id}`;
 
     if ( async ) {
         return new Promise((resolve) => {

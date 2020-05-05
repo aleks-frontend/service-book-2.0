@@ -1,6 +1,8 @@
+import { endpointUrl } from '../helpers';
+
 export default ({ query, token, entityName }) => {
     return new Promise((resolve) => {
-        let url = `https://radiant-crag-38285.herokuapp.com/${entityName}?`
+        let url = `${endpointUrl}/${entityName}?`;
         url += 'per_page=' + query.pageSize
         url += '&page=' + (query.page)
         url += '&search=' + (query.search)

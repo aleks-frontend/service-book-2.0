@@ -1,6 +1,8 @@
+import { endpointUrl } from '../helpers';
+
 export default ({ token, status }) => {
     return new Promise((resolve) => {
-        let url = 'https://radiant-crag-38285.herokuapp.com/reports/serviceCount';
+        let url = `${endpointUrl}/reports/serviceCount`;
 
         fetch(url, {
             method: 'POST',

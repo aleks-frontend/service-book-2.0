@@ -16,7 +16,7 @@ const ForgotPassword = () => {
     const requestPassword = async (e) => {
         e.preventDefault();
 
-        const response = await fetch('https://radiant-crag-38285.herokuapp.com/users/forgotpass', {
+        const response = await fetch('${endpointUrl}/users/forgotpass', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

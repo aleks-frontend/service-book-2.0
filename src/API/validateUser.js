@@ -1,5 +1,7 @@
+import { endpointUrl } from '../helpers';
+
 export default async (token) => {
-    const response = await fetch('https://radiant-crag-38285.herokuapp.com/users/me', {
+    const response = await fetch(`${endpointUrl}/users/me`, {
         method: 'GET',
         headers: {
             'x-auth-token': token,

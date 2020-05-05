@@ -1,6 +1,8 @@
+import { endpointUrl } from '../helpers';
+
 export default ({ entityName, entityData, token }) => {
     return new Promise( async (resolve, reject) =>  {
-        let url = `https://radiant-crag-38285.herokuapp.com/${entityName}`;
+        let url = `${endpointUrl}/${entityName}`;
 
         const response = await fetch(url, {
             method: 'POST',

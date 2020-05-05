@@ -1,6 +1,8 @@
+import { endpointUrl } from '../helpers';
+
 export default (token) => {
     return new Promise((resolve) => {
-        let url = 'https://radiant-crag-38285.herokuapp.com/reports/earningsPerMonth';
+        let url = `${endpointUrl}/reports/earningsPerMonth`;
 
         fetch(url, {
             method: 'GET',

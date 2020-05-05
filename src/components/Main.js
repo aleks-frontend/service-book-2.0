@@ -49,7 +49,7 @@ const Main = () => {
                     horizontal: 'center',
                 }}
                 open={context.snackbarVisible}
-                autoHideDuration={3000}
+                autoHideDuration={1500}
                 onClose={context.hideSnackbar}
                 ContentProps={{
                     'aria-describedby': 'message-id',

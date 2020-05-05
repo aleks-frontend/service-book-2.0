@@ -1,9 +1,11 @@
+import { endpointUrl } from '../helpers';
+
 export default ({ afterUpdate, beforeUpdate, token, entityName }) => {
     return new Promise( async (resolve, reject) =>  {
         delete afterUpdate._id;
         delete afterUpdate.__v;
 
-        let url = `https://radiant-crag-38285.herokuapp.com/${entityName}/${beforeUpdate._id}`;
+        let url = `${endpointUrl}/${entityName}/${beforeUpdate._id}`;
 
         const response = await fetch(url, {
             method: 'PUT',

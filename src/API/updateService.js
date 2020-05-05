@@ -1,6 +1,8 @@
+import { endpointUrl } from '../helpers';
+
 export default ({ token, inputValues, id }) => {
     return new Promise( async (resolve, reject) =>  {
-        let url = `https://radiant-crag-38285.herokuapp.com/services/${id}`;
+        let url = `${endpointUrl}/services/${id}`;
 
         const response = await fetch(url, {
             method: 'PUT',

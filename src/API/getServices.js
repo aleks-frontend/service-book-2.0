@@ -1,6 +1,8 @@
+import { endpointUrl } from '../helpers';
+
 export default ({ token, query }) => {
     return new Promise(async (resolve, reject) => {
-        let url = `https://radiant-crag-38285.herokuapp.com/services?`;
+        let url = `${endpointUrl}/services?`;
         url += 'page=' + (query.page)
         url += '&search=' + (query.search)
         url += '&orderByColumn=' + (query.orderByColumn || 'date')

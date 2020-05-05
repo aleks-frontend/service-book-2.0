@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import LoginForm from './LoginForm';
+import { endpointUrl } from '../helpers';
 
 const colors = {
     silver: '#C4C4C4',
@@ -85,7 +86,7 @@ const Login = (props) => {
         <LoginWrapper>
             <div>{props.location.message}</div>
             <LoginHeading>Log in</LoginHeading>
-            <LoginGoogleButton href="https://radiant-crag-38285.herokuapp.com/auth/google">
+            <LoginGoogleButton href={`${endpointUrl}/auth/google`}>
                 Use Google Account
             </LoginGoogleButton>
             <LoginSeparator>or</LoginSeparator>

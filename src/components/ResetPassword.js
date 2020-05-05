@@ -25,7 +25,7 @@ const ResetPassword = (props) => {
             return;
         }
 
-        const response = await fetch('https://radiant-crag-38285.herokuapp.com/users/resetpass', {
+        const response = await fetch('${endpointUrl}/users/resetpass', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

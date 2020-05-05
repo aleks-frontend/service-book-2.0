@@ -1,6 +1,8 @@
+import { endpointUrl } from '../helpers';
+
 export default ({ serviceData, token }) => {
     return new Promise( async (resolve, reject) =>  {
-        let url = `https://radiant-crag-38285.herokuapp.com/services`;
+        let url = `${endpointUrl}/services`;
 
         const response = await fetch(url, {
             method: 'POST',

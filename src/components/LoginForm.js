@@ -3,6 +3,8 @@ import StyledForm from './StyledForm';
 import { AppContext } from './AppProvider';
 import { Redirect } from 'react-router-dom';
 
+import { endpointUrl } from '../helpers';
+
 const LoginForm = () => {
     const context = React.useContext(AppContext);
     const [ state, setState ] = React.useState({
@@ -19,7 +21,7 @@ const LoginForm = () => {
 
     const login = async (e) => {
         e.preventDefault();
-        const response = await fetch('https://radiant-crag-38285.herokuapp.com/auth/', {
+        const response = await fetch(`${endpointUrl}/auth/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

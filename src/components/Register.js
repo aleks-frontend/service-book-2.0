@@ -29,7 +29,7 @@ const Register = () => {
         let response;
         
         try {
-            response = await fetch('https://radiant-crag-38285.herokuapp.com/users/', {
+            response = await fetch('${endpointUrl}/users/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
