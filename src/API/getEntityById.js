@@ -26,6 +26,6 @@ export default ({ token, entityName, id, async = true }) => {
         
         if (request.status === 200) {
           return JSON.parse(request.responseText);
-        }        
+        }
     }
 }  

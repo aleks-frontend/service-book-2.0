@@ -143,10 +143,9 @@ const Home = (props) => {
     if (isGoogleRedirect) {
         if (context.userStatus === 'logged-out') {
             const { token } = props.match.params;
-            const data = validateUserAPI(token);
+            const { data: user, error } = validateUserAPI(token);
 
-            if (!data.error) {
-                const { user } = data;
+            if (!error) {
                 if (user.isApproved) {
                     context.setUserInfo({ token: token, userStatus: 'logged-in', user });
                 } else {
