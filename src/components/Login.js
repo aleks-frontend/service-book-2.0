@@ -1,9 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 import LoginForm from './LoginForm';
-import { endpointUrl } from '../helpers';
+import { endpointUrl, colors } from '../helpers';
 
-const colors = {
+const colors2 = {
     silver: '#C4C4C4',
     cornflowerBlue: '#7972FC'
 }
@@ -43,7 +43,8 @@ const LoginGoogleButton = styled.a`
         transform: translateY(-50%);
         width: 20px;
         height: 20px;
-        background: red;
+        background: url('https://images.theconversation.com/files/93616/original/image-20150902-6700-t2axrz.jpg?ixlib=rb-1.1.0&q=45&auto=format&w=1000&fit=clip');
+        background-size: 100% 100%;
     }
 `;
 
@@ -52,7 +53,7 @@ const LoginSeparator = styled.div`
     align-items: center;
     justify-content: center;
     height: 40px;
-    color: ${colors.silver};
+    color: ${colors2.silver};
 
     &::before, &::after {
         content: '';
@@ -60,7 +61,7 @@ const LoginSeparator = styled.div`
         margin: 0 5%;
         height: 1px;
         width: 30%;
-        background: ${colors.silver};
+        background: ${colors2.silver};
     }
 `;
 
