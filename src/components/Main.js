@@ -83,9 +83,30 @@ const Main = () => {
                             <PrivateRoute exact path='/' component={Home} />
                             <PrivateRoute exact path='/new-service' component={ServiceForm} />
                             <PrivateRoute exact path='/history' component={History} />
-                            <PrivateRoute exact path='/customers' component={Entities} key="customers" entityName="customers" entityLabel="Customer" />
-                            <PrivateRoute exact path='/actions' component={Entities} key="actions" entityName="actions" entityLabel="Action" />
-                            <PrivateRoute exact path='/devices' component={Entities} key="devices" entityName="devices" entityLabel="Device" />
+                            <PrivateRoute 
+                                exact 
+                                path='/customers' 
+                                component={Entities} 
+                                key="customers" 
+                                entityName="customers" 
+                                entityLabel="Customer" 
+                            />
+                            <PrivateRoute 
+                                exact 
+                                path='/actions' 
+                                component={Entities} 
+                                key="actions" 
+                                entityName="actions" 
+                                entityLabel="Action" 
+                            />
+                            <PrivateRoute 
+                                exact 
+                                path='/devices' 
+                                component={Entities} 
+                                key="devices" 
+                                entityName="devices" 
+                                entityLabel="Device" 
+                            />
                             <PrivateRoute exact path='/profile' component={Profile} />
                             <Route component={NotFound} />
                         </Switch>
