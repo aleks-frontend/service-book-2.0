@@ -3,16 +3,18 @@ import styled from 'styled-components';
 import LoginForm from './LoginForm';
 import { endpointUrl, colors } from '../helpers';
 
-const colors2 = {
-    silver: '#C4C4C4',
-    cornflowerBlue: '#7972FC'
-}
-
 const LoginWrapper = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+`;
+
+const LoginBox = styled.div`
     padding: 20px 100px;
     width: 500px;
     max-width: 100%;
-    background: #e3e3e3;
+    color: ${colors.rddarkgray};
     text-align: center;
     box-sizing: border-box;
 `;
@@ -31,9 +33,10 @@ const LoginGoogleButton = styled.a`
     justify-content: center;
     height: 40px;
     width: 100%;
-    color: #000;
+    color: ${colors.rddarkgray};
     background-color: #fff;
     text-decoration: none;
+    border: 1px solid ${colors.rdlightgray};
 
     &::before {
         content: '';
@@ -53,7 +56,7 @@ const LoginSeparator = styled.div`
     align-items: center;
     justify-content: center;
     height: 40px;
-    color: ${colors2.silver};
+    color: ${colors.rdlightgray};
 
     &::before, &::after {
         content: '';
@@ -61,13 +64,18 @@ const LoginSeparator = styled.div`
         margin: 0 5%;
         height: 1px;
         width: 30%;
-        background: ${colors2.silver};
+        background: ${colors.rdlightgray};
     }
 `;
 
 const LoginFooter = styled.div`
+    margin: 2rem 0 0;
+
     a {
+        color: ${colors.rdblue};
+        text-decoration: none;
         &:hover { cursor: pointer; }
+        &:visited { color: ${colors.rdblue}; }
     }
 `;
 
@@ -85,17 +93,19 @@ const Login = (props) => {
 
     return (
         <LoginWrapper>
-            <div>{props.location.message}</div>
-            <LoginHeading>Log in</LoginHeading>
-            <LoginGoogleButton href={`${endpointUrl}/auth/google`}>
-                Use Google Account
-            </LoginGoogleButton>
-            <LoginSeparator>or</LoginSeparator>
-            <LoginForm />
-            <LoginFooter>
-                <a href="#" onClick={(e) => goToForgotPassword(e)} className="forgotPassword">Forgot Password</a>
-                <p>Don't have an account? <a href="#" onClick={(e) => gotToRegister(e)} className="signUp">Sign Up</a></p>
-            </LoginFooter>
+            <LoginBox>
+                <div>{props.location.message}</div>
+                <LoginHeading>Log in</LoginHeading>
+                <LoginGoogleButton href={`${endpointUrl}/auth/google`}>
+                    Use Google Account
+                </LoginGoogleButton>
+                <LoginSeparator>or</LoginSeparator>
+                <LoginForm />
+                <LoginFooter>
+                    <a href="#" onClick={(e) => goToForgotPassword(e)} className="forgotPassword">Forgot Password</a>
+                    <p>Don't have an account? <a href="#" onClick={(e) => gotToRegister(e)} className="signUp">Sign Up</a></p>
+                </LoginFooter>
+            </LoginBox>
         </LoginWrapper>
     );
 };

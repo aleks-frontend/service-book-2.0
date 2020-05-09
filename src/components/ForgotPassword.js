@@ -1,41 +1,47 @@
 import React from 'react';
-import StyledForm from './StyledForm';
+import styled from 'styled-components';
+
+import StyledForm, { StyledFormWrapper } from './StyledForm';
+import { Redirect } from 'react-router-dom';
+
+import forgotPasswordAPI from '../API/forgotPassword';
 
 const ForgotPassword = () => {
-    const [ state, setState ] = React.useState({
-        email: ''
+    const [state, setState] = React.useState({
+        email: '',
+        redirect: false
     });
 
     const handleInputChange = (name, event) => {
         setState({
             ...state,
-            [name]: event.target.value 
+            [name]: event.target.value
         })
     }
 
     const requestPassword = async (e) => {
         e.preventDefault();
 
-        const response = await fetch('${endpointUrl}/users/forgotpass', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                email: state.email
-            })
-        });
-
-        const message = await response.text();
+        const message = await forgotPasswordAPI(state.email);
         alert(message);
+        setState({ ...state, redirect: true });
     }
 
-    return (        
-        <StyledForm onSubmit={(e) => requestPassword(e)}>
-            <label>Email Address</label>
-            <input type="email" value={state.email} onChange={(event) => handleInputChange('email', event)} />
-            <button type="submit">Send Request</button>
-        </StyledForm>
+    return (
+        <React.Fragment>
+            {state.redirect && <Redirect to={{
+                pathname: '/login',
+                message: "Reset link was sent to your email address."
+            }} />}
+            <StyledFormWrapper>
+                <StyledForm onSubmit={(e) => requestPassword(e)}>
+                    <h1>Forgot Password</h1>
+                    <label>Email Address</label>
+                    <input type="email" value={state.email} onChange={(event) => handleInputChange('email', event)} />
+                    <button type="submit">Send Request</button>
+                </StyledForm>
+            </StyledFormWrapper>
+        </React.Fragment>
     );
 };
 
