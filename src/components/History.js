@@ -1,11 +1,14 @@
 import React from 'react';
 import { CSSTransition } from 'react-transition-group';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import styled from 'styled-components';
 
 import HistoryCard from './HistoryCard';
 import ServiceForm from './ServiceForm';
 import Controls from './UI/Controls';
 import DeletePrompt from './UI/DeletePrompt';
 import Popup from './UI/Popup';
+import Button from './UI/Button';
 import PrintPopup from './UI/PrintPopup';
 import Legend from './UI/Legend';
 import GridBasic from './UI/GridBasic';
@@ -15,6 +18,10 @@ import FilterCriteriaEmpty from './UI/FilterCriteriaEmpty';
 import { AppContext } from './AppProvider';
 import getServicesAPI from '../API/getServices';
 import { fields } from '../helpers';
+
+const HistoryMain = styled.div`
+    width: 100%;
+`;
 
 const History = (props) => {
     const context = React.useContext(AppContext);
@@ -28,7 +35,9 @@ const History = (props) => {
         showNoServiceMessage: false,
         showPrintPopup: false,
         printedService: null,
-        services: []
+        services: [],
+        pagesLoaded: 0,
+        hasMore: true
     });
 
     React.useEffect(() => {
@@ -36,13 +45,16 @@ const History = (props) => {
         fetchServices(props.historyFilters);
     }, []);
 
-    const fetchServices = async ({ searchText, sortCriteria, sortDirection, status } = {}) => {
+    const fetchServices = async ({ searchText, sortCriteria, sortDirection, status, isScrolled } = {}) => {
         // Setting the loaded state to false to show the loading spinner
         setState({ ...state, loaded: false });
 
-        const services = await getServicesAPI({
+        let pagesLoaded = isScrolled ? state.pagesLoaded : 0;
+
+        const result = await getServicesAPI({
             query: {
-                page: 0,
+                page: pagesLoaded,
+                pageSize: 20,
                 search: searchText === undefined ? context.filters.searchText : searchText,
                 orderByColumn: sortCriteria || context.filters.sortCriteria,
                 orderDirection: sortDirection || context.filters.sortDirection,
@@ -51,10 +63,14 @@ const History = (props) => {
             token: context.token
         });
 
+        const { services, hasMore } = result;
+
         setState({
             ...state,
-            services,
-            loaded: true
+            services: isScrolled ? [...state.services, ...services] : services,
+            hasMore,
+            loaded: true,
+            pagesLoaded: ++pagesLoaded
         });
     }
 
@@ -129,19 +145,19 @@ const History = (props) => {
         // each key press event while the user is typing
         searchTimeout = setTimeout(() => {
             const activeFilters = context.setFilters({ searchText: value });
-            fetchServices(activeFilters)
+            fetchServices(activeFilters);
         }, 500);
     }
 
     const handleSortCriteriaChange = (value) => {
         const activeFilters = context.setFilters({ sortCriteria: value });
-        fetchServices(activeFilters)
+        fetchServices(activeFilters);
     };
 
     const handleSortDirectionClick = () => {
         const direction = context.filters.sortDirection === 'desc' ? 'asc' : 'desc';
         const activeFilters = context.setFilters({ sortDirection: direction });
-        fetchServices(activeFilters)
+        fetchServices(activeFilters);
     }
 
     /** Render Methods **/
@@ -241,9 +257,36 @@ const History = (props) => {
                 />
             </TopBar>
             {state.showNoServiceMessage && <FilterCriteriaEmpty>No service meets the filtered criteria!</FilterCriteriaEmpty>}
-            <GridBasic>
-                {state.loaded ? renderServices() : <LoadingSpinner />}
-            </GridBasic>
+            <HistoryMain>
+                <InfiniteScroll
+                    dataLength={state.services.length} //This is important field to render the next data
+                    next={() => fetchServices({ isScrolled: true })}
+                    hasMore={state.hasMore}
+                    loader={
+                        <div style={{
+                            position: 'relative',
+                            gridColumn: '1 / -1',
+                            height: '38rem'
+                        }}>
+                            <LoadingSpinner />
+                        </div>
+                    }
+                    endMessage={
+                        <p style={{ textAlign: 'center' }}>
+                            <Button 
+                                margin='2rem 0 0'
+                                compact={false}
+                                onClick={() =>  {
+                                    window.scroll({ top: 0 , left: 0, behavior: 'smooth' })
+                                }}>Scroll to the top
+                            </Button>
+                        </p>
+                    }>
+                    <GridBasic>
+                        {renderServices()}
+                    </GridBasic>
+                </InfiniteScroll>
+            </HistoryMain>
             {renderUpdateServicePopup()}
             {renderPrintPopup()}
         </React.Fragment>

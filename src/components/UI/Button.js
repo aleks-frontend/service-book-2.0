@@ -30,8 +30,7 @@ const Button = (props) => {
     return (
         <StyledButton 
             isText={props.isText}
-            onClick={props.onClick}
-            type={props.type}
+            onClick={props.onClick}ß
             compact={props.compact}
             margin={props.margin}
             disabled={props.disabled}
