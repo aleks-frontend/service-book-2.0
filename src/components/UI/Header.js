@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { colors, widths, pageTitles } from '../../helpers';
+import { colors, widths, pageTitles, zIndexes } from '../../helpers';
 import Avatar from './Avatar';
 import { AppContext } from '../AppProvider';
 
@@ -14,6 +14,7 @@ const StyledHeader = styled.div`
     color: ${colors.rdlightgray};
     font-size: 2.5rem;
     background-color: ${colors.rdgray};
+    z-index: ${zIndexes.header};
 
     .logo { 
         height: 5rem;
@@ -25,12 +26,12 @@ const StyledHeader = styled.div`
     }
 `;
 
-const Header = (props) => {
+const Header = () => {
     const context = React.useContext(AppContext);
 
     return (
         <StyledHeader>
-            {pageTitles[context.activePage]}
+            { pageTitles[context.activePage] }
             <Avatar />
         </StyledHeader>
     );

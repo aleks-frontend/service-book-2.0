@@ -4,6 +4,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import { makeStyles } from '@material-ui/core/styles';
+import styled from 'styled-components';
 
 import { AppContext } from './AppProvider';
 
@@ -18,7 +19,7 @@ import Profile from './Profile';
 import Entities from './Entities';
 import ServiceForm from './ServiceForm';
 import NotFound from './NotFound';
-import styled from 'styled-components';
+import { zIndexes } from '../helpers';
 
 const MainWrapper = styled.div`
     min-height: 100vh;
@@ -29,6 +30,7 @@ const MainWrapper = styled.div`
 const MainBody = styled.div`
     flex: 1;
     display: flex;
+    z-index: ${zIndexes.body};
 `;
 
 const useStyles = makeStyles(theme => ({
@@ -73,7 +75,7 @@ const Main = () => {
     return (
         <BrowserRouter>
             <MainWrapper>
-                <Header title="Header title" />
+                <Header />
                 <MainBody>
                     <Side>
                         <Nav />
