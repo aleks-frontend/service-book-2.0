@@ -2,6 +2,8 @@ import React from 'react';
 import { Redirect } from 'react-router-dom';
 import StyledForm, { StyledFormWrapper } from './StyledForm';
 
+import { endpointUrl } from '../helpers';
+
 const Register = () => {
     const [state, setState] = React.useState({
         completed: false,
@@ -29,7 +31,7 @@ const Register = () => {
         let response;
 
         try {
-            response = await fetch('${endpointUrl}/users/', {
+            response = await fetch(`${endpointUrl}/users/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

@@ -2,6 +2,8 @@ import React from 'react';
 import { Redirect } from 'react-router-dom';
 import StyledForm from './StyledForm';
 
+import { endpointUrl } from '../helpers';
+
 const ResetPassword = (props) => {
     const [ state, setState ] = React.useState({
         password: '',
@@ -25,7 +27,7 @@ const ResetPassword = (props) => {
             return;
         }
 
-        const response = await fetch('${endpointUrl}/users/resetpass', {
+        const response = await fetch(`${endpointUrl}/users/resetpassword`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
