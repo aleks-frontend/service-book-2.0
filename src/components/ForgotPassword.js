@@ -1,5 +1,6 @@
 import React from 'react';
 import StyledForm from './StyledForm';
+import { endpointUrl } from '../helpers';
 
 const ForgotPassword = () => {
     const [ state, setState ] = React.useState({
@@ -16,7 +17,7 @@ const ForgotPassword = () => {
     const requestPassword = async (e) => {
         e.preventDefault();
 
-        const response = await fetch('${endpointUrl}/users/forgotpass', {
+        const response = await fetch(`${endpointUrl}/users/forgotpassword`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

@@ -2,8 +2,9 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { colors } from '../../helpers';
-import { AppContext } from '../AppProvider';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
+
+import { appLogout, getAppUser } from '../../auth';
 
 const AvatarWrapper = styled.div`
     position: relative;
@@ -41,18 +42,20 @@ const AvatarDropdown = styled.div`
     }
 `;
 
-const Avatar = () => {    
-    const context = React.useContext(AppContext);
+const Avatar = (props) => {            
+    const user = getAppUser();
     
-    return (
+    return (      
       <AvatarWrapper>
-          <AvatarPhoto imgSrc={context.user.thumbnail} />
+          <AvatarPhoto imgSrc={user && user.thumbnail} />
           <AvatarDropdown className="avatarDropdown">
               <Link to='/profile'>Profile</Link>
-              <button onClick={() => context.setUserInfo({userStatus: 'logged-out', user: null})}>Log out</button>
+              <button onClick={() => {
+                  appLogout(props.history);
+              }}>Log out</button>
           </AvatarDropdown>
-      </AvatarWrapper>  
+      </AvatarWrapper>
     );
 };
 
-export default Avatar;
+export default withRouter(Avatar);

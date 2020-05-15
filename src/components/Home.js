@@ -11,6 +11,8 @@ import getServicesCountByStatusAPI from '../API/getServicesCountByStatus';
 import validateUserAPI from '../API/validateUser';
 import { AppContext } from './AppProvider';
 
+import { getAppToken } from '../auth';
+
 const StyledGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -99,8 +101,8 @@ const StyledFrame = styled.div`
 
 const Home = (props) => {
     const context = React.useContext(AppContext);
-    const { token } = context;
-    const isGoogleRedirect = props.match && props.match.params && props.match.params.userId && props.match.params.token;
+    const token  = getAppToken();
+    
     const [state, setState] = React.useState({
         dataReady: false,
         apiData: {
@@ -114,67 +116,29 @@ const Home = (props) => {
     });
 
 
-    React.useEffect(() => {
-        if (!isGoogleRedirect) {
-            const earningsPromise = getEarningsPerMonthAPI(token);
-            const servicesInProgressPromise = getServicesCountByStatusAPI({ token, status: statusEnum.INPROGRESS });
-            const servicesCompletedPromise = getServicesCountByStatusAPI({ token, status: statusEnum.COMPLETED });
+    React.useEffect(() => {        
+        const earningsPromise = getEarningsPerMonthAPI(token);
+        const servicesInProgressPromise = getServicesCountByStatusAPI({ token, status: statusEnum.INPROGRESS });
+        const servicesCompletedPromise = getServicesCountByStatusAPI({ token, status: statusEnum.COMPLETED });
 
-            Promise.all([earningsPromise, servicesInProgressPromise, servicesCompletedPromise])
-                .then((results) => {
-                    setState({
-                        ...state,
-                        apiData: {
-                            earningsPerMonth: results[0].data,
-                            monthsLabels: results[0].labels,
-                            servicesCount: {
-                                inProgress: results[1],
-                                completed: results[2]
-                            }
-                        },
-                        dataReady: true
-                    })
-                });
-
-        }
+        Promise.all([earningsPromise, servicesInProgressPromise, servicesCompletedPromise])
+            .then((results) => {
+                setState({
+                    ...state,
+                    apiData: {
+                        earningsPerMonth: results[0].data,
+                        monthsLabels: results[0].labels,
+                        servicesCount: {
+                            inProgress: results[1],
+                            completed: results[2]
+                        }
+                    },
+                    dataReady: true
+                })
+            });
     }, []);
-
-    // We are validating user's ID and token after Google login
-    if (isGoogleRedirect) {
-        if (context.userStatus === 'logged-out') {
-            const { token } = props.match.params;
-            const { data: user, error } = validateUserAPI(token);
-
-            if (!error) {
-                if (user.isApproved) {
-                    context.setUserInfo({ token: token, userStatus: 'logged-in', user });
-                } else {
-                    context.setUserInfo({ userStatus: 'not-approved' });
-                }
-            } else {
-                context.setUserInfo({ userStatus: 'invalid' });
-            }
-        }
-
-        if (context.userStatus === 'logged-in') {
-            return <Redirect to="/" />
-        } else if (context.userStatus === 'invalid') {
-            return <Redirect to={{
-                pathname: '/login',
-                message: "Better luck next time!"
-            }} />
-        } else if (context.userStatus === 'not-approved') {
-            return <Redirect to={{
-                pathname: '/login',
-                message: "You are not an approved user yet."
-            }} />
-        } else {
-            return <div>Loading...</div>
-        }
-    }
-
-    if (context.userStatus === 'logged-out') return <Redirect to='/login' />;
-
+    
+   
     // Getting the data for the Chart
     const getChartData = () => {
         return {

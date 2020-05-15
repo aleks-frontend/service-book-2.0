@@ -1,8 +1,10 @@
 import React from 'react';
 import { AppContext } from './AppProvider';
+import { getAppUser } from '../auth';
 
 const Profile = () => {
     const context = React.useContext(AppContext);
+    const user = getAppUser();
 
     React.useEffect(() => {
         context.setActivePage('profile');
@@ -14,13 +16,13 @@ const Profile = () => {
                 {
                      width: 200, 
                      height: 200, 
-                     background: `url(${context.user.thumbnail})`, 
+                     background: `url(${user.thumbnail})`, 
                      backgroundSize: 'cover', 
                      borderRadius: '50%' 
                 }
             } />
-            <div>Hello <strong>{context.user.name}</strong></div>
-            {!context.user.googleId && <div>
+            <div>Hello <strong>{user.name}</strong></div>
+            {!user.isGoogleAccount && <div>
                 <h1>Change Password</h1>  
                 <div>
                     <label>Current Password</label> 

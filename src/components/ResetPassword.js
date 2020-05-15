@@ -1,6 +1,7 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import StyledForm from './StyledForm';
+import { endpointUrl } from '../helpers';
 
 const ResetPassword = (props) => {
     const [ state, setState ] = React.useState({
@@ -9,7 +10,7 @@ const ResetPassword = (props) => {
         isFinished: false
     });
 
-    const { userId, token } = props.match.params;
+    const { token } = props.match.params;
 
     const handleInputChange = (name, event) => {
         setState({
@@ -25,7 +26,7 @@ const ResetPassword = (props) => {
             return;
         }
 
-        const response = await fetch('${endpointUrl}/users/resetpass', {
+        const response = await fetch(`${endpointUrl}/users/resetpassword`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

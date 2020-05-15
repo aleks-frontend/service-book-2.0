@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import LoginForm from './LoginForm';
 import { endpointUrl, colors } from '../helpers';
 
+import { appLogin } from '../auth';
+
 const colors2 = {
     silver: '#C4C4C4',
     cornflowerBlue: '#7972FC'
@@ -73,6 +75,7 @@ const LoginFooter = styled.div`
 
 
 const Login = (props) => {
+
     const gotToRegister = (e) => {
         e.preventDefault();
         props.history.push('/register');
@@ -83,6 +86,54 @@ const Login = (props) => {
         props.history.push('/forgot-password');
     }
 
+    const classicLoginSubmit = async (email, password) => {
+        const response = await fetch(`${endpointUrl}/auth/`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email,
+                password
+            })
+        });
+
+        if ( response.status === 200 ) {            
+            const { token, user } = await response.json();            
+            
+            appLogin({ history: props.history, token, user });
+        } else {
+            const error = await response.text();
+            alert(error);
+        }
+    }
+
+    const googleLoginSubmit = async (googleToken) => {
+        const response = await fetch(`${endpointUrl}/auth/validate`, {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+                'x-auth-token': googleToken,
+            }            
+        });
+
+        if ( response.status === 200 ) {            
+            const { token, user } = await response.json();
+                        
+            appLogin({ history: props.history, token, user });
+        } else {
+            const error = await response.text();
+            alert(error);
+        }
+    }
+
+    const isGoogleCallback = props.match && props.match.params && props.match.params.googleToken;
+    if (isGoogleCallback) {
+        const googleToken = props.match.params.googleToken;
+        googleLoginSubmit(googleToken);
+    }
+
     return (
         <LoginWrapper>
             <div>{props.location.message}</div>
@@ -91,7 +142,7 @@ const Login = (props) => {
                 Use Google Account
             </LoginGoogleButton>
             <LoginSeparator>or</LoginSeparator>
-            <LoginForm />
+            <LoginForm onSubmit={classicLoginSubmit}/>
             <LoginFooter>
                 <a href="#" onClick={(e) => goToForgotPassword(e)} className="forgotPassword">Forgot Password</a>
                 <p>Don't have an account? <a href="#" onClick={(e) => gotToRegister(e)} className="signUp">Sign Up</a></p>
