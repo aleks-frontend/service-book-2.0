@@ -4,6 +4,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import { makeStyles } from '@material-ui/core/styles';
+import styled from 'styled-components';
 
 import { AppContext } from './AppProvider';
 
@@ -18,7 +19,7 @@ import Profile from './Profile';
 import Entities from './Entities';
 import ServiceForm from './ServiceForm';
 import NotFound from './NotFound';
-import styled from 'styled-components';
+import { zIndexes } from '../helpers';
 
 const MainWrapper = styled.div`
     min-height: 100vh;
@@ -29,6 +30,7 @@ const MainWrapper = styled.div`
 const MainBody = styled.div`
     flex: 1;
     display: flex;
+    z-index: ${zIndexes.body};
 `;
 
 const useStyles = makeStyles(theme => ({
@@ -68,53 +70,52 @@ const Main = () => {
                 ]}
             />
         );
-    }    
-    
+    }
+
     return (
-        <BrowserRouter>
-            <MainWrapper>
-                <Header title="Header title" />
-                <MainBody>
-                    <Side>
-                        <Nav />
-                    </Side>
-                    <Content>
-                        <Switch>
-                            <PrivateRoute exact path='/' component={Home} />
-                            <PrivateRoute exact path='/new-service' component={ServiceForm} />
-                            <PrivateRoute exact path='/history' component={History} />
-                            <PrivateRoute 
-                                exact 
-                                path='/customers' 
-                                component={Entities} 
-                                key="customers" 
-                                entityName="customers" 
-                                entityLabel="Customer" 
-                            />
-                            <PrivateRoute 
-                                exact 
-                                path='/actions' 
-                                component={Entities} 
-                                key="actions" 
-                                entityName="actions" 
-                                entityLabel="Action" 
-                            />
-                            <PrivateRoute 
-                                exact 
-                                path='/devices' 
-                                component={Entities} 
-                                key="devices" 
-                                entityName="devices" 
-                                entityLabel="Device" 
-                            />
-                            <PrivateRoute exact path='/profile' component={Profile} />
-                            <Route component={NotFound} />
-                        </Switch>
-                    </Content>
-                </MainBody>
-                {renderSnackbar()}
-            </MainWrapper>
-        </BrowserRouter>
+        <MainWrapper>
+            <Header />
+            <MainBody>
+                <Side>
+                    <Nav />
+                </Side>
+                <Content>
+                    <Switch>
+                        <PrivateRoute exact path='/' component={Home} />
+                        <PrivateRoute exact path='/new-service' component={ServiceForm} />
+                        <PrivateRoute exact path='/history' component={History} />
+                        <PrivateRoute
+                            exact
+                            path='/customers'
+                            component={Entities}
+                            key="customers"
+                            entityName="customers"
+                            entityLabel="Customer"
+                        />
+                        <PrivateRoute
+                            exact
+                            path='/actions'
+                            component={Entities}
+                            key="actions"
+                            entityName="actions"
+                            entityLabel="Action"
+                        />
+                        <PrivateRoute
+                            exact
+                            path='/devices'
+                            component={Entities}
+                            key="devices"
+                            entityName="devices"
+                            entityLabel="Device"
+                        />
+                        <PrivateRoute exact path='/profile' component={Profile} />
+                        <Route component={NotFound} />
+                    </Switch>
+                </Content>
+            </MainBody>
+            {renderSnackbar()}
+        </MainWrapper>
+
     );
 };
 

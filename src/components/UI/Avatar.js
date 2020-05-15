@@ -1,6 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 
+import Button from './Button';
+
 import { colors } from '../../helpers';
 import { Link, withRouter } from 'react-router-dom';
 
@@ -25,20 +27,20 @@ const AvatarDropdown = styled.div`
     position: absolute;
     top: 4rem;
     right: 0;
-    padding: 1rem;
+    padding: 0;
     min-width: 12rem;
     background: #fff;
     text-align: center;
-    border: 1px solid ${colors.rddarkgray};
-    border-radius: 0.3rem;
+    border: 0.2rem solid ${colors.rdgray2};
+    border-radius: 0.2rem;
 
     a {
         display: block;
-        padding: 0.5em;
-        font-size: 1.2rem;
-        color: ${colors.rddarkgray};
+        padding: 0.9em;
+        font-size: 1.1rem;
+        color: #fff;
         text-decoration: none;
-        border-bottom: 0.1rem solid ${colors.rddarkgray};
+        background: ${colors.rdgray2};
     }
 `;
 
@@ -49,10 +51,11 @@ const Avatar = (props) => {
       <AvatarWrapper>
           <AvatarPhoto imgSrc={user && user.thumbnail} />
           <AvatarDropdown className="avatarDropdown">
-              <Link to='/profile'>Profile</Link>
-              <button onClick={() => {
-                  appLogout(props.history);
-              }}>Log out</button>
+              <Link to='/profile'>Profile</Link>              
+              <Button 
+                onClick={() => appLogout(props.history)}
+                margin="1rem auto"                
+                >Log out</Button>
           </AvatarDropdown>
       </AvatarWrapper>
     );

@@ -8,6 +8,7 @@ export const statusEnum = {
 
 export const endpointUrl = 'https://servicebook2.herokuapp.com';
 
+
 export const fields = {
     customers: [
         {
@@ -196,3 +197,15 @@ export const legendItems = [
         statusIcon: svgIcons.shipped 
     }
 ];
+
+export const zIndexes = {
+    header: 2,
+    body: 1
+};
+
+export const borderRadiuses = {
+    small: '0.2rem',
+    medium: '0.3rem',
+    big: '0.4rem',
+    full: '50%'
+};

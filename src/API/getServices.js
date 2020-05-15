@@ -4,6 +4,7 @@ export default ({ token, query }) => {
     return new Promise(async (resolve, reject) => {
         let url = `${endpointUrl}/services?`;
         url += 'page=' + (query.page)
+        url += '&per_page=' + (query.pageSize)
         url += '&search=' + (query.search)
         url += '&orderByColumn=' + (query.orderByColumn || 'date')
         url += '&orderDirection=' + (query.orderDirection || 'desc')

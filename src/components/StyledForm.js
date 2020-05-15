@@ -1,13 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const colors = {
-    silver: '#C4C4C4',
-    cornflowerBlue: '#7972FC'
-}
+import { colors } from '../helpers';
 
 const StyledForm = styled.form`
-    margin: 20px 0;
+    width: 100%;
+    max-width: 30rem;
+    color: ${colors.rddarkgray};
     text-align: left;
 
     label {
@@ -20,7 +19,7 @@ const StyledForm = styled.form`
         padding: 5px;
         width: 100%;
         height: 40px;
-        border: 1px solid ${colors.silver};
+        border: 1px solid ${colors.rdlightgray};
         border-radius: 2px;
         box-sizing: border-box;
     }
@@ -35,9 +34,23 @@ const StyledForm = styled.form`
         font-size: 15px;
         font-weight: bold;
         color: #fff;
-        background: ${colors.cornflowerBlue};
+        background: ${colors.rdblue};
         border-radius: 2px;
+        border: none;
     }
+
+    h1 {
+        font-size: 2.4rem;
+        margin: 0 0 3rem;
+        text-align: center;
+    }
+`;
+
+export const StyledFormWrapper = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
 `;
 
 export default StyledForm;
