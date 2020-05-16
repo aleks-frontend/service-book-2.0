@@ -17,7 +17,8 @@ export default ({ afterUpdate, beforeUpdate, token, entityName }) => {
         });
 
         if (response.status === 200) {
-            resolve();
+            const updatedEntity = await response.json();
+            resolve(updatedEntity);
         } else {
             const error = await response.text();
             reject(error);

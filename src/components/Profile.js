@@ -8,6 +8,7 @@ import { AppContext } from './AppProvider';
 import { colors, borderRadiuses } from '../helpers';
 
 import resetPasswordAPI from '../API/resetPassword';
+import updateEntityAPI from '../API/updateEntity';
 
 const ProfileWrapper = styled.div`
     overflow: hidden;
@@ -35,9 +36,12 @@ const ProfileText = styled.div`
     margin: 0.5rem 2rem;
 `;
 
-const ProfileInfo = styled.div`
-    font-size: ${props => props.secondary ? '1.5rem' : '2rem'};
-    color: ${props => props.secondary ? colors.rdlightgray : '#fff'};
+const ProfileInfo = styled.input`
+    padding: ${props => props.readOnly ? '0' : '0.5rem'};
+    font-size: ${props => props.readOnly ? '2rem' : '1.6rem'};
+    color: ${props => props.readOnly ? '#fff' : colors.rddarkgray};
+    background: ${props => props.readOnly ? 'transparent' : '#fff'};
+    border: none;
 `;
 
 const ProfileBody = styled.div`
@@ -62,7 +66,9 @@ const Profile = () => {
     const [state, setState] = React.useState({
         currentPassword: '',
         newPassword: '',
-        confirmedPassword: ''
+        confirmedPassword: '',
+        name: context.user.name,
+        editMode: false
     });
 
     React.useEffect(() => {
@@ -72,9 +78,24 @@ const Profile = () => {
     const handleInputChange = (name, event) => {
         setState({
             ...state,
-            [name]: event.target.value
+            [name]: event.target.value            
         })
     };
+
+    const handleEditClick = async () => {
+        if ( state.editMode ) {
+            const user = await updateEntityAPI({ 
+                afterUpdate: { name: state.name }, 
+                beforeUpdate: context.user, 
+                token: context.token, 
+                entityName: 'users' 
+            });
+
+            context.setUserInfo({ user });
+        }
+        
+        setState({ ...state, editMode: !state.editMode });
+    }
 
     const handleFormSubmit = async () => {
         const { currentPassword, newPassword: password, confirmedPassword } = state;
@@ -104,10 +125,23 @@ const Profile = () => {
             <ProfileHeader>
                 <ProfilePhoto src={context.user.thumbnail} />
                 <ProfileText>
-                    <ProfileInfo>{context.user.name}</ProfileInfo>
-                    <ProfileInfo secondary={true}>Some title</ProfileInfo>
+                    <ProfileInfo
+                        readOnly={!state.editMode}
+                        type="text"
+                        value={state.name}
+                        onChange={(event) => handleInputChange('name', event)}
+                    />
+                    {/* <ProfileInfo secondary={true}>Some title</ProfileInfo> */}
                 </ProfileText>
-                {!context.user.googleId && <Button dark={true} compact={true}>Edit</Button>}
+                {!context.user.googleId &&
+                    <Button
+                        dark={true}
+                        compact={true}
+                        customWidth="6rem"
+                        margin="0.5rem 0 0"
+                        onClick={handleEditClick}>
+                        {state.editMode ? 'Save' : 'Edit'}
+                    </Button>}
             </ProfileHeader>
             <ProfileBody>
                 {context.user.googleId && <ProfileMessage>
