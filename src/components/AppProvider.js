@@ -11,7 +11,6 @@ const AppProvider = (props) => {
     };
 
     const [state, setState] = React.useState({
-        token: '',
         activePage: 'home',
         snackbarVisible: false,
         snackbarEntity: '',
@@ -56,7 +55,6 @@ const AppProvider = (props) => {
 
     return (
         <AppContext.Provider value={{
-            token: state.token,
             activePage: state.activePage,
             setActivePage,
             snackbarVisible: state.snackbarVisible,

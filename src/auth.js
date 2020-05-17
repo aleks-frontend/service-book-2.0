@@ -56,16 +56,20 @@ const refreshToken = (token) => {
 
     //get new token 60 seconds before it expires
     setTimeout(async () => {
-        const data = await fetchApi({
+        const response = await fetchApi({
             url: '/auth',
             method: 'POST'
         });
 
-        if (data && data.token) {
-            inMemoryToken = data.token;
-            refreshToken(data.token);
+        if (response && response.status === 200 && response.data.token) {
+            inMemoryToken = response.data.token;
+            refreshToken(response.data.token);
         }
     }, tokenValidityMilliSeconds - 60 * 1000);
+}
+
+const updateUser = (user) => {
+    inMemoryUser = user;
 }
 
 const getAppToken = () => inMemoryToken;
@@ -73,4 +77,4 @@ const getAppToken = () => inMemoryToken;
 const getAppUser = () => inMemoryUser;
 
 
-export { appLogin, appLogout, getAppToken, getAppUser }
+export { appLogin, appLogout, getAppToken, updateUser, getAppUser }

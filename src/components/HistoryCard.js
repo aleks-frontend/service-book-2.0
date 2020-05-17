@@ -3,7 +3,6 @@ import styled from 'styled-components';
 
 import IconButton from './UI/IconButton.js'
 import { statusEnum, colors, svgIcons } from '../helpers';
-import { AppContext } from './AppProvider';
 
 const StyledHistoryCard = styled.div`
     display: flex;
@@ -151,8 +150,7 @@ const StyledActions = styled.div`
 `;
 
 const HistoryCard = (props) => {
-    const { service, id } = props;
-    const context = React.useContext(AppContext);
+    const { service } = props;
 
     /** Setting up the state **/
     const [state, setState] = React.useState({

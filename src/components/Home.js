@@ -6,12 +6,10 @@ import styled from 'styled-components';
 import LoadingSpinner from './UI/LoadingSpinner';
 
 import { colors, statusEnum, svgIcons } from '../helpers';
-import getEarningsPerMonthAPI from '../API/getEarningsPerMonth';
-import getServicesCountByStatusAPI from '../API/getServicesCountByStatus';
-import validateUserAPI from '../API/validateUser';
 import { AppContext } from './AppProvider';
 
 import { getAppToken } from '../auth';
+import fetchApi from '../fetchApi';
 
 const StyledGrid = styled.div`
   display: grid;
@@ -116,21 +114,47 @@ const Home = (props) => {
     });
 
 
-    React.useEffect(() => {        
-        const earningsPromise = getEarningsPerMonthAPI(token);
-        const servicesInProgressPromise = getServicesCountByStatusAPI({ token, status: statusEnum.INPROGRESS });
-        const servicesCompletedPromise = getServicesCountByStatusAPI({ token, status: statusEnum.COMPLETED });
-
+    React.useEffect(() => {                  
+        const earningsPromise = fetchApi({ 
+            url: '/reports/earningsPerMonth',
+            method: 'GET',
+            token
+        });
+        const servicesInProgressPromise = fetchApi({ 
+            url: '/reports/serviceCount',
+            method: 'POST',
+            token, 
+            body: { status: statusEnum.INPROGRESS }
+        });
+        const servicesCompletedPromise = fetchApi({ 
+            url: '/reports/serviceCount',
+            method: 'POST',
+            token, 
+            body: { status: statusEnum.COMPLETED } 
+        });
+        
         Promise.all([earningsPromise, servicesInProgressPromise, servicesCompletedPromise])
             .then((results) => {
+                let earnings;
+                if (results[0].status === 200) {
+                    earnings = results[0].data;
+                } else {
+                    earnings = {
+                        data: [],
+                        labels: []
+                    }
+                }
+                const servicesInProgress = results[1].data;
+                const servicesCompleted = results[2].data;
+
                 setState({
                     ...state,
                     apiData: {
-                        earningsPerMonth: results[0].data,
-                        monthsLabels: results[0].labels,
+                        earningsPerMonth: earnings.data,
+                        monthsLabels: earnings.labels,
                         servicesCount: {
-                            inProgress: results[1],
-                            completed: results[2]
+                            inProgress: servicesInProgress,
+                            completed: servicesCompleted
                         }
                     },
                     dataReady: true

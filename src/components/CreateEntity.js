@@ -3,9 +3,10 @@ import styled from 'styled-components';
 
 import Button from './UI/Button';
 import { colors, breakpoints } from '../helpers';
-import createEntityAPI from '../API/createEntity';
 
 import { AppContext } from './AppProvider';
+import fetchApi from '../fetchApi';
+import { getAppToken } from '../auth';
 
 const StyledCreateEntity = styled.div`
     position: relative;
@@ -143,13 +144,19 @@ const CreateEntity = (props) => {
         // Checking if this a regular CreateEntity component 
         // (not the case when we are calling it from NewService)
         try {
-            newEntity = await createEntityAPI({
-                entityName: props.endpointName || props.stateName,
-                entityData: state.entityState,
-                token: context.token
+            const response = await fetchApi({ 
+                url: '/' + (props.endpointName || props.stateName),
+                method: 'POST',
+                token: getAppToken(),
+                body: state.entityState
             });
-            
-            context.showSnackbar(`new ${props.entityLabel.toLowerCase()} was created successfully (${state.entityState.name})`);
+
+            if (response.status === 200) {
+                newEntity = response.data;
+                context.showSnackbar(`new ${props.entityLabel.toLowerCase()} was created successfully (${state.entityState.name})`);
+            } else {
+                context.showSnackbar(response.data);
+            }            
             
             if (props.isDirect) {
                 props.hidePopup();

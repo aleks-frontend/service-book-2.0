@@ -114,16 +114,16 @@ const Login = (props) => {
     }
 
     const tryAutoLogin = async () => {        
-        const autoLogin = await fetchApi({ 
+        const response = await fetchApi({ 
             url: '/auth',
             method: 'POST'
         });
 
-        if (autoLogin && autoLogin.token && autoLogin.user) {
+        if (response && response.status === 200 && response.data.token && response.data.user) {
             appLogin({ 
                 history: props.history, 
-                token: autoLogin.token, 
-                user: autoLogin.user 
+                token: response.data.token, 
+                user: response.data.user 
             });
         } else {
             setState({
@@ -134,43 +134,38 @@ const Login = (props) => {
     }
 
     const classicLoginSubmit = async (email, password) => {
-        const response = await fetch(`${endpointUrl}/auth/`, {
+        const response = await fetchApi({ 
+            url: '/auth',
             method: 'POST',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
+            body: {
                 email,
                 password
-            })
+            }
         });
 
         if ( response.status === 200 ) {            
-            const { token, user } = await response.json();            
+            const { token, user } = response.data;            
             
             appLogin({ history: props.history, token, user });
         } else {
-            const error = await response.text();
+            const error = response.data;
             alert(error);
         }
     }
 
     const googleLoginSubmit = async (googleToken) => {
-        const response = await fetch(`${endpointUrl}/auth/validate`, {
+        const response = await fetchApi({ 
+            url: '/auth/validate',
             method: 'GET',
-            credentials: 'include',
-            headers: {
-                'x-auth-token': googleToken,
-            }            
+            token: googleToken            
         });
 
         if ( response.status === 200 ) {            
-            const { token, user } = await response.json();
+            const { token, user } = response.data;
                         
             appLogin({ history: props.history, token, user });
         } else {
-            const error = await response.text();
+            const error = response.data;
             alert(error);
         }
     }

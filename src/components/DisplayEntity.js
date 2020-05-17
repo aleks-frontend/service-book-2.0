@@ -3,9 +3,10 @@ import styled from 'styled-components';
 import MaterialTable from 'material-table';
 import tableIcons from '../tableIcons';
 import { AppContext } from './AppProvider';
-import getEntitiesAPI from '../API/getEntities';
-import deleteEntityAPI from '../API/deleteEntity';
-import updateEntityAPI from '../API/updateEntity';
+
+import fetchApi from '../fetchApi';
+import { getAppToken } from '../auth';
+import singleLineString from '../singleLineString';
 
 const StyledTableWrapper = styled.div`
   width: 100%;
@@ -16,6 +17,7 @@ const StyledTableWrapper = styled.div`
 
 const DisplayEntity = (props) => {
   const context = React.useContext(AppContext);
+  const token = getAppToken();
   const tableRef = React.useRef();
 
   React.useEffect(() => {
@@ -34,6 +36,48 @@ const DisplayEntity = (props) => {
     }
   });
 
+  const getEntities = async (query) => {
+    const url = singleLineString`/${props.name}?
+        per_page=${query.pageSize}
+        &page=${query.page}
+        &search=${query.search}
+        &orderByColumn=${query.orderBy ? query.orderBy.field : ''}
+        &orderDirection=${query.orderDirection}`
+
+    const result = (await fetchApi({
+      url,
+      method: 'GET',
+      token
+    })).data;
+
+    return {
+      data: result.data,
+      page: result.page,
+      totalCount: result.totalCount,
+    }
+  }
+
+  const updateEntity = (id, newEntity) => {
+    const url = `/${props.name}/${id}`;
+    delete newEntity._id;
+    delete newEntity.__v;
+
+    return fetchApi({
+      url,
+      method: 'PUT',
+      token,
+      body: newEntity
+    });
+  }
+
+  const deleteEntity = (id) => {
+    const url = `/${props.name}/${id}`;
+    return fetchApi({
+      url,
+      method: 'DELETE',
+      token
+    });
+  }
 
   return (
     <StyledTableWrapper>
@@ -44,28 +88,26 @@ const DisplayEntity = (props) => {
         title=""
         columns={columns}
         data={(query) => {
-          return getEntitiesAPI({ query: query, token: context.token, entityName: props.name })
-          }
+          return getEntities(query);
+        }
         }
         editable={
           {
             onRowDelete: async (oldData) => {
-              try {
-                await deleteEntityAPI({ id: oldData._id, token: context.token, entityName: props.name })
+              const response = await deleteEntity(oldData._id);
+              if (response.status === 200) {
                 context.showSnackbar(`${props.entityLabel.toLowerCase()} was deleted (${oldData.name})`);
-              } catch(err) {
-                context.showSnackbar(err);
+              } else {
+                context.showSnackbar(response.data);
               }
-              
             },
             onRowUpdate: async (newData, oldData) => {
-              try {
-                await updateEntityAPI({ afterUpdate: newData, beforeUpdate: oldData, token: context.token, entityName: props.name })
+              const response = await updateEntity(oldData._id, newData);
+              if (response.status === 200) {
                 context.showSnackbar(`${props.entityLabel.toLowerCase()} was updated (${oldData.name})`);
-              } catch(err) {
-                context.showSnackbar(err);
+              } else {
+                context.showSnackbar(response.data);
               }
-              
             }
           }
         }

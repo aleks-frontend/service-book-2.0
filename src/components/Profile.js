@@ -5,11 +5,11 @@ import Button from './UI/Button';
 import GeneralForm from './GeneralForm';
 
 import { AppContext } from './AppProvider';
-import { getAppUser } from '../auth';
+import { updateUser, getAppUser, getAppToken } from '../auth';
 import { colors, borderRadiuses } from '../helpers';
 
-import resetPasswordAPI from '../API/resetPassword';
-import updateEntityAPI from '../API/updateEntity';
+import fetchApi from '../fetchApi';
+
 
 const ProfileWrapper = styled.div`
     overflow: hidden;
@@ -85,17 +85,19 @@ const Profile = () => {
     };
 
     const handleEditClick = async () => {
-        if ( state.editMode ) {
-            const user = await updateEntityAPI({ 
-                afterUpdate: { name: state.name }, 
-                beforeUpdate: user, 
-                token: context.token, 
-                entityName: 'users' 
-            });
-
-            context.setUserInfo({ user });
+        if (state.editMode) {
+            const updatedUser = (await fetchApi({
+                url: `/users/${user._id}`,
+                method: 'PUT',
+                token: getAppToken(),
+                body: {
+                    name: state.name
+                }
+            })).data;
+            
+            updateUser(updatedUser);
         }
-        
+
         setState({ ...state, editMode: !state.editMode });
     }
 
@@ -107,13 +109,17 @@ const Profile = () => {
             return;
         }
 
-        const message = await resetPasswordAPI({
-            token: context.token,
-            currentPassword,
-            password
+        const response = await fetchApi({
+            url: '/users/changepassword',
+            method: 'POST',
+            token: getAppToken(),
+            body: {
+                currentPassword,
+                password
+            }
         });
 
-        context.showSnackbar(message);
+        context.showSnackbar(response.data);
         setState({
             ...state,
             currentPassword: '',

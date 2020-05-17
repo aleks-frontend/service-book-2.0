@@ -29,19 +29,19 @@ export default async ({ url, method, token, body }) => {
     //set body
     if (body) fetchConfigs.body = JSON.stringify(body);
 
-    let result;
     const response = await fetch(url, fetchConfigs);
-
+    
     //get result based on the response type, can be json or text
     const contentType = response.headers.get("content-type");
+    let resultData;    
     if (contentType && contentType.indexOf("application/json") !== -1) {
-        result = await response.json();
+        resultData = await response.json();
     } else {
-        result = await response.text();
-        if (response.status !== 200) {
-            // alert(result);
-        }
+        resultData = await response.text();     
     }
 
-    return result;
+    return {
+        data: resultData,
+        status: response.status
+    }
 }

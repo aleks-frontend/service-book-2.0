@@ -1,10 +1,9 @@
 import React from 'react';
-import styled from 'styled-components';
 
 import StyledForm, { StyledFormWrapper } from './StyledForm';
 import { Redirect } from 'react-router-dom';
 
-import forgotPasswordAPI from '../API/forgotPassword';
+import fetchApi from '../fetchApi';
 
 const ForgotPassword = () => {
     const [state, setState] = React.useState({
@@ -21,9 +20,15 @@ const ForgotPassword = () => {
 
     const requestPassword = async (e) => {
         e.preventDefault();
-
-        const message = await forgotPasswordAPI(state.email);
-        alert(message);
+        
+        await fetchApi({ 
+            url: '/users/forgotpassword',
+            method: 'POST',
+            body: {
+                email: state.email
+            }
+        });
+        
         setState({ ...state, redirect: true });
     }
 

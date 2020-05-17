@@ -9,7 +9,6 @@ import Register from './Register';
 import ResetPassword from './ResetPassword';
 import ForgotPassword from './ForgotPassword';
 import Main from './Main';
-import Home from './Home';
 
 const Router = () => {
     return (

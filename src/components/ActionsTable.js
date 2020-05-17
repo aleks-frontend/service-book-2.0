@@ -2,24 +2,24 @@ import React from 'react';
 import CreatableSelect from 'react-select/async-creatable';
 
 import Button from './UI/Button.js'
-import { AppContext } from './AppProvider';
-import createEntityAPI from '../API/createEntity';
-import getEntityByIdAPI from '../API/getEntityById';
+
+import fetchApi from '../fetchApi';
+import { getAppToken } from '../auth';
 
 import { StyledTable, StyledTableCell } from './styled-components/styledTable';
 
 const priceInputRefs = {};
 
 const ActionsTable = (props) => {
-    const context = React.useContext(AppContext);
-    // const { actions: appActions } = context.state.ssot;
-    
+    const token = getAppToken();
+
     const [state, setState] = React.useState({
         actionRows: props.actions
     });        
 
     /** State control methods **/
-    const addActionRow = () => {
+    const addActionRow = (event) => {
+        event.preventDefault();
         const actionRow = {
             id: "",
             quantity: 1,
@@ -70,16 +70,17 @@ const ActionsTable = (props) => {
     const handleDropdownChange = async (event, actionMeta) => {
         const rowId = actionMeta.name;
         const value = event.value;
-        const action = await getEntityByIdAPI({
-            token: context.token, 
-            entityName: 'actions', 
-            id: value
-        }); 
-        
-        updateActionRowState({ 
-            rowId, 
-            value, 
-            key: 'id', 
+
+        const action = (await fetchApi({
+            url: `/actions/${value}`,
+            method: 'GET',
+            token
+        })).data;
+
+        updateActionRowState({
+            rowId,
+            value,
+            key: 'id',
             price: action.price,
             name: action.name
         });
@@ -98,23 +99,22 @@ const ActionsTable = (props) => {
 
     const handleCreateAction = async (event) => {
         const rowId = state.actionRows[state.actionRows.length - 1].rowId;
-        const newAction = await createEntityAPI({
-            entityName: 'actions',
-            entityData: {
-                name: event, 
+        const newAction = (await fetchApi({
+            url: '/actions',
+            method: 'POST',
+            token,
+            body: {
+                name: event,
                 price: 0
-            },
-            token: context.token
-        });
+            }
+        })).data;        
 
-        console.log(newAction);
-
-        updateActionRowState({ 
-            rowId, 
-            value: newAction._id,  
+        updateActionRowState({
+            rowId,
+            value: newAction._id,
             key: 'id',
             price: 0,
-            name: newAction.name 
+            name: newAction.name
         });
 
         focusPriceInput(rowId);

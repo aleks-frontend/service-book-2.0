@@ -6,10 +6,10 @@ import Button from './Button';
 import LoadingSpinner from './LoadingSpinner';
 import PdfDispatchNote from '../PDF/PdfDispatchNote';
 import PdfInvoice from '../PDF/PdfInvoice';
-import { AppContext } from '../AppProvider';
 import { colors } from '../../helpers';
 
-import getEntityByIdAPI from '../../API/getEntityById';
+import fetchApi from '../../fetchApi';
+import { getAppToken } from '../../auth';
 
 const StyledPrintPopup = styled.div`
     position: fixed;
@@ -46,7 +46,6 @@ const StyledPrintPopupLoader = styled.div`
 `;
 
 const PrintPopup = (props) => {
-    const context = React.useContext(AppContext);
     const { service } = props;
     const [state, setState] = React.useState({
         dispatchNoteTriggered: false,
@@ -55,12 +54,12 @@ const PrintPopup = (props) => {
     });    
 
     React.useEffect(() => {
-        (async () => {
-            const customer = await getEntityByIdAPI({
-                token: context.token,
-                entityName: 'customers',
-                id: service.customer.id
-            });
+        (async () => {            
+            const customer = (await fetchApi({
+                url: `/customers/${service.customer.id}`,
+                method: 'GET',
+                token: getAppToken()
+            })).data;
 
             setState({ ...state, customer });
         })();
@@ -69,7 +68,6 @@ const PrintPopup = (props) => {
     const renderBlobProviders= ({ Component, fileName }) => {
         const pdfProps = {
             service,
-            token: context.token,
             customer: state.customer
         };
 

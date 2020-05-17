@@ -8,15 +8,13 @@ import CreateEntity from './CreateEntity';
 import ActionsTable from './ActionsTable';
 import NewDevicesTable from './NewDevicesTable';
 import Button from './UI/Button';
-import LoadingSpinner from './UI/LoadingSpinner';
 import PdfDispatchNote from './PDF/PdfDispatchNote';
 import { AppContext } from './AppProvider';
 import { breakpoints, statusEnum, colors, fields } from '../helpers';
 
-import createServiceAPI from '../API/createService';
-import getEntitiesAPI from '../API/getEntities';
-import updateServiceAPI from '../API/updateService';
-import getEntityByIdAPI from '../API/getEntityById';
+import fetchApi from '../fetchApi';
+import { getAppToken } from '../auth';
+import singleLineString from '../singleLineString';
 
 const StyledForm = styled.form`
     position: relative;
@@ -76,6 +74,7 @@ const StyledForm = styled.form`
 
 const ServiceForm = (props) => {
     const context = React.useContext(AppContext);
+    const token = getAppToken();
     const defaultStates = {
         inputs: {
             description: {
@@ -183,7 +182,7 @@ const ServiceForm = (props) => {
         });
     }
 
-    const updateNewDevicesState = (newDevicesRows) => {
+    const updateNewDevicesState = (newDevicesRows) => {        
         updateState({
             stateKey: 'inputs',
             stateObjKey: 'newDevices',
@@ -416,10 +415,12 @@ const ServiceForm = (props) => {
         } else {
             if (!props.isUpdate) {
                 try {
-                    const service = await createServiceAPI({
-                        serviceData: inputValues,
-                        token: context.token
-                    });
+                    const service = (await fetchApi({
+                        url: '/services',
+                        method: 'POST',
+                        token,
+                        body: inputValues
+                    })).data;
 
                     // Adding new service to the state, so we can pass it to PDF Dispatch note
                     updateState({
@@ -481,12 +482,13 @@ const ServiceForm = (props) => {
                         updatedInputValues[inputValueKey] = inputValues[inputValueKey];
                     }
                 }
-
-                const updatedService = await updateServiceAPI({
-                    token: context.token,
-                    inputValues: updatedInputValues,
-                    id: props.service._id
-                });
+                
+                const updatedService = (await fetchApi({
+                    url: `/services/${props.service._id}`,
+                    method: 'PUT',
+                    token,
+                    body: updatedInputValues
+                })).data;
 
                 // update History state here !!!
                 props.updateHistoryStateServices(updatedService);
@@ -581,8 +583,7 @@ const ServiceForm = (props) => {
                 <Button
                     type="button"
                     onClick={props.hidePopup}
-                    isText={true}
-                    isText={true}
+                    isText={true}                    
                 >Cancel</Button>
             );
         }
@@ -619,15 +620,15 @@ const ServiceForm = (props) => {
                         margin="0 0 0 0.5rem"
                         // Button needs to be disabled until the snackBar is hidden
                         disabled={state.generatePDF || context.snackbarVisible}
-                        onClick={() => {
+                        onClick={async (event) => {
+                            event.preventDefault();
                             // Adding new service customer to the state, so we can pass it to PDF Dispatch note
-                            const customer = getEntityByIdAPI({
-                                token: context.token,
-                                entityName: 'customers',
-                                id: state.service.customer.id,
-                                async: false
-                            });
-
+                            const customer = (await fetchApi({
+                                url: `/customers/${state.service.customer.id}`,
+                                method: 'GET',
+                                token
+                            })).data;
+                            
                             setState({
                                 ...state,
                                 generatePDF: true,
@@ -661,17 +662,18 @@ const ServiceForm = (props) => {
 
     const getEntityDropdownOptions = ({ inputValue, entityName }) => {
         return new Promise(async resolve => {
-            const entities = await getEntitiesAPI({
-                query: {
-                    pageSize: 100,
-                    page: 0,
-                    search: inputValue,
-                    orderBy: 'name',
-                    orderDirection: 'asc',
-                },
-                token: context.token,
-                entityName
-            });
+            const url = singleLineString`/${entityName}?
+                per_page=100
+                &page=0
+                &search=${inputValue}
+                &orderByColumn=name
+                &orderDirection=asc`;
+
+            const entities = (await fetchApi({
+                url,
+                method: 'GET',
+                token
+            })).data;
 
             const dropdownOptions = entities.data.map(entity => {
                 return {
