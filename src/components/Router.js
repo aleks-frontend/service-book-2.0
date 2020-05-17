@@ -19,7 +19,7 @@ const Router = () => {
                     <Route exact path='/register' component={Register} />
                     <Route exact path='/reset-password/:token' component={ResetPassword} />
                     <Route exact path='/forgot-password' component={ForgotPassword} />
-                    <Route exact path="/login" component={Login} />                    
+                    <Route exact path="/login" component={Login} />
                     <Route exact path="/validate/:googleToken" render={(props) => <Login {...props} />} />
                     <PrivateRoute path='/' component={Main} />                    
                 </Switch>

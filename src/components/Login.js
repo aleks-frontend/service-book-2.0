@@ -4,6 +4,7 @@ import LoginForm from './LoginForm';
 import { endpointUrl, colors } from '../helpers';
 
 import { appLogin } from '../auth';
+import fetchApi from '../fetchApi';
 
 const LoginWrapper = styled.div`
     display: flex;
@@ -82,7 +83,25 @@ const LoginFooter = styled.div`
 `;
 
 
-const Login = (props) => {
+const Login = (props) => {    
+    const [state, setState] = React.useState({
+        isGoogleCallback: false,
+        autoLoginFinished: false
+    })
+
+    React.useEffect(() => {
+        const isGoogleCallback = props.match && props.match.params && props.match.params.googleToken;
+        if (isGoogleCallback) {
+            setState({
+                ...state,
+                isGoogleCallback: true
+            });
+            const googleToken = props.match.params.googleToken;
+            googleLoginSubmit(googleToken);
+        } else {
+            tryAutoLogin();
+        }
+    }, []);
 
     const gotToRegister = (e) => {
         e.preventDefault();
@@ -92,6 +111,26 @@ const Login = (props) => {
     const goToForgotPassword = (e) => {
         e.preventDefault();
         props.history.push('/forgot-password');
+    }
+
+    const tryAutoLogin = async () => {        
+        const autoLogin = await fetchApi({ 
+            url: '/auth',
+            method: 'POST'
+        });
+
+        if (autoLogin && autoLogin.token && autoLogin.user) {
+            appLogin({ 
+                history: props.history, 
+                token: autoLogin.token, 
+                user: autoLogin.user 
+            });
+        } else {
+            setState({
+                ...state,
+                autoLoginFinished: true
+            });
+        }
     }
 
     const classicLoginSubmit = async (email, password) => {
@@ -136,28 +175,27 @@ const Login = (props) => {
         }
     }
 
-    const isGoogleCallback = props.match && props.match.params && props.match.params.googleToken;
-    if (isGoogleCallback) {
-        const googleToken = props.match.params.googleToken;
-        googleLoginSubmit(googleToken);
-    }
+    
 
     return (
-        <LoginWrapper>
-            <LoginBox>
-                <div>{props.location.message}</div>
-                <LoginHeading>Log in</LoginHeading>
-                <LoginGoogleButton href={`${endpointUrl}/auth/google`}>
-                    Use Google Account
-                </LoginGoogleButton>
-                <LoginSeparator>or</LoginSeparator>
-                <LoginForm onSubmit={classicLoginSubmit}/>
-                <LoginFooter>
-                    <a href="#" onClick={(e) => goToForgotPassword(e)} className="forgotPassword">Forgot Password</a>
-                    <p>Don't have an account? <a href="#" onClick={(e) => gotToRegister(e)} className="signUp">Sign Up</a></p>
-                </LoginFooter>
-            </LoginBox>
-        </LoginWrapper>
+        <React.Fragment>
+            {(state.autoLoginFinished || state.isGoogleCallback) && <LoginWrapper>
+                <LoginBox>
+                    <div>{props.location.message}</div>
+                    <LoginHeading>Log in</LoginHeading>
+                    <LoginGoogleButton href={`${endpointUrl}/auth/google`}>
+                        Use Google Account
+                    </LoginGoogleButton>
+                    <LoginSeparator>or</LoginSeparator>
+                    <LoginForm onSubmit={classicLoginSubmit}/>
+                    <LoginFooter>
+                        <a href="#" onClick={(e) => goToForgotPassword(e)} className="forgotPassword">Forgot Password</a>
+                        <p>Don't have an account? <a href="#" onClick={(e) => gotToRegister(e)} className="signUp">Sign Up</a></p>
+                    </LoginFooter>
+                </LoginBox>
+            </LoginWrapper>}
+            {!state.autoLoginFinished && <div>loading...</div>}
+        </React.Fragment>
     );
 };
 

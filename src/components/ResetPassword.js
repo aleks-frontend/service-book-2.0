@@ -3,8 +3,6 @@ import { Redirect } from 'react-router-dom';
 import StyledForm from './StyledForm';
 import { endpointUrl } from '../helpers';
 
-import { endpointUrl } from '../helpers';
-
 const ResetPassword = (props) => {
     const [ state, setState ] = React.useState({
         password: '',
