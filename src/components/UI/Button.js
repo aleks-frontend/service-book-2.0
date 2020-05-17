@@ -6,8 +6,10 @@ import { colors } from '../../helpers';
 const StyledButton = styled.button`
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     margin: ${props => props.margin ? props.margin : '0'};
-    padding: ${props => props.compact ? '0 2rem' : '0 3.5rem'};
+    padding: ${props => props.customWidth ? '0' : (props.compact ? '0 2rem' : '0 3.5rem')};
+    width: ${props => props.customWidth ? props.customWidth : 'auto' };
     height: ${props => props.compact ? '2.5rem' : '3rem'};
     color: ${props => props.isText ? colors.rdgray2 : '#fff'};
     background: ${props => props.isText ? 'transparent' : (props.dark ? colors.rddarkgray : colors.rdgray2)};
@@ -27,13 +29,14 @@ const StyledButton = styled.button`
 `;
 
 const Button = (props) => {
-    const { isText, onClick, compact, margin, disabled, dark } = props;
+    const { isText, onClick, compact, margin, customWidth, disabled, dark } = props;
     return (
         <StyledButton
             isText={isText}
             onClick={onClick}
             compact={compact}
             margin={margin}
+            customWidth={customWidth}
             disabled={disabled}
             dark={dark}
         >
