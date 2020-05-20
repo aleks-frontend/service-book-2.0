@@ -3,8 +3,8 @@ import styled from 'styled-components';
 
 import Button from './Button';
 import { colors } from '../../helpers';
-import { AppContext } from '../AppProvider';
-import deleteEntityAPI from '../../API/deleteEntity';
+import fetchApi from '../../fetchApi';
+import { getAppToken } from '../../auth';
 
 const StyledDeletePrompt = styled.div`
     position: fixed;
@@ -36,7 +36,6 @@ const StyledDeletePrompt = styled.div`
 `;
 
 const DeletePrompt = (props) => {
-    const context = React.useContext(AppContext);
 
     return (
         <StyledDeletePrompt onClick={() => props.updateDeletedServiceId(null)}>
@@ -45,13 +44,15 @@ const DeletePrompt = (props) => {
                 <div className="buttons">
                     <Button
                         onClick={async () => {
-                            await deleteEntityAPI({ 
-                                id: props.id, 
-                                token: context.token, 
-                                entityName: 'services' 
+                            const response = await fetchApi({
+                                url: `/services/${props.id}`,
+                                method: 'DELETE',
+                                token: getAppToken()
                             });
 
-                            props.deleteService(props.id)
+                            if (response.status === 200) {
+                                props.deleteService(props.id);
+                            }
                         }}
                         type="button"
                         margin="0 0.5rem"

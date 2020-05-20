@@ -3,6 +3,9 @@ import styled from 'styled-components';
 import LoginForm from './LoginForm';
 import { endpointUrl, colors } from '../helpers';
 
+import { appLogin } from '../auth';
+import fetchApi from '../fetchApi';
+
 const LoginWrapper = styled.div`
     display: flex;
     justify-content: center;
@@ -80,7 +83,26 @@ const LoginFooter = styled.div`
 `;
 
 
-const Login = (props) => {
+const Login = (props) => {    
+    const [state, setState] = React.useState({
+        isGoogleCallback: false,
+        autoLoginRejected: false
+    })
+
+    React.useEffect(() => {
+        const isGoogleCallback = props.match && props.match.params && props.match.params.googleToken;
+        if (isGoogleCallback) {
+            setState({
+                ...state,
+                isGoogleCallback: true
+            });
+            const googleToken = props.match.params.googleToken;
+            googleLoginSubmit(googleToken);
+        } else {
+            tryAutoLogin();
+        }
+    }, []);
+
     const gotToRegister = (e) => {
         e.preventDefault();
         props.history.push('/register');
@@ -91,22 +113,84 @@ const Login = (props) => {
         props.history.push('/forgot-password');
     }
 
+    const tryAutoLogin = async () => {        
+        const response = await fetchApi({ 
+            url: '/auth',
+            method: 'POST'
+        });
+
+        if (response && response.status === 200 && response.data.token && response.data.user) {
+            appLogin({ 
+                history: props.history, 
+                token: response.data.token, 
+                user: response.data.user 
+            });
+        } else {
+            setState({
+                ...state,
+                autoLoginRejected: true
+            });
+        }
+    }
+
+    const classicLoginSubmit = async (email, password) => {
+        const response = await fetchApi({ 
+            url: '/auth',
+            method: 'POST',
+            body: {
+                email,
+                password
+            }
+        });
+
+        if ( response.status === 200 ) {            
+            const { token, user } = response.data;            
+            
+            appLogin({ history: props.history, token, user });
+        } else {
+            const error = response.data;
+            alert(error);
+        }
+    }
+
+    const googleLoginSubmit = async (googleToken) => {
+        const response = await fetchApi({ 
+            url: '/auth/validate',
+            method: 'GET',
+            token: googleToken            
+        });
+
+        if ( response.status === 200 ) {            
+            const { token, user } = response.data;
+                        
+            appLogin({ history: props.history, token, user });
+        } else {
+            const error = response.data;
+            alert(error);
+        }
+    }
+
+    
+
     return (
-        <LoginWrapper>
-            <LoginBox>
-                <div>{props.location.message}</div>
-                <LoginHeading>Log in</LoginHeading>
-                <LoginGoogleButton href={`${endpointUrl}/auth/google`}>
-                    Use Google Account
-                </LoginGoogleButton>
-                <LoginSeparator>or</LoginSeparator>
-                <LoginForm />
-                <LoginFooter>
-                    <a href="#" onClick={(e) => goToForgotPassword(e)} className="forgotPassword">Forgot Password</a>
-                    <p>Don't have an account? <a href="#" onClick={(e) => gotToRegister(e)} className="signUp">Sign Up</a></p>
-                </LoginFooter>
-            </LoginBox>
-        </LoginWrapper>
+        <React.Fragment>
+            {(state.autoLoginRejected || state.isGoogleCallback) && <LoginWrapper>
+                <LoginBox>
+                    <div>{props.location.message}</div>
+                    <LoginHeading>Log in</LoginHeading>
+                    <LoginGoogleButton href={`${endpointUrl}/auth/google`}>
+                        Use Google Account
+                    </LoginGoogleButton>
+                    <LoginSeparator>or</LoginSeparator>
+                    <LoginForm onSubmit={classicLoginSubmit}/>
+                    <LoginFooter>
+                        <a href="#" onClick={(e) => goToForgotPassword(e)} className="forgotPassword">Forgot Password</a>
+                        <p>Don't have an account? <a href="#" onClick={(e) => gotToRegister(e)} className="signUp">Sign Up</a></p>
+                    </LoginFooter>
+                </LoginBox>
+            </LoginWrapper>}
+            {!state.autoLoginRejected && <div>loading...</div>}
+        </React.Fragment>
     );
 };
 

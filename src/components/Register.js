@@ -2,9 +2,9 @@ import React from 'react';
 import { Redirect } from 'react-router-dom';
 import StyledForm, { StyledFormWrapper } from './StyledForm';
 
-import { endpointUrl } from '../helpers';
+import fetchApi from '../fetchApi';
 
-const Register = () => {
+const Register = () => {    
     const [state, setState] = React.useState({
         completed: false,
         email: '',
@@ -27,24 +27,16 @@ const Register = () => {
             alert('passwords dont match');
             return;
         }
-
-        let response;
-
-        try {
-            response = await fetch(`${endpointUrl}/users/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    email: state.email,
-                    name: state.name,
-                    password: state.password,
-                })
-            });
-        } catch (err) {
-            console.log(err);
-        }
+      
+        const response = await fetchApi({ 
+            url: '/users',
+            method: 'POST',
+            body: {
+                email: state.email,
+                name: state.name,
+                password: state.password,
+            }
+        });   
 
         if (response.status === 200) {
             setState({
@@ -52,7 +44,7 @@ const Register = () => {
                 completed: true
             })
         } else {
-            const error = await response.text();
+            const error = response.data;
             alert(error);
         }
 

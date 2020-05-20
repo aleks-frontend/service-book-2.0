@@ -11,9 +11,6 @@ const AppProvider = (props) => {
     };
 
     const [state, setState] = React.useState({
-        userStatus: 'logged-out',
-        token: '',
-        user: {},
         activePage: 'home',
         snackbarVisible: false,
         snackbarEntity: '',
@@ -21,22 +18,6 @@ const AppProvider = (props) => {
         statusActiveFilters: [],
         filters: defaultFilters
     });
-
-    const setUserInfo = ({ userStatus, token, user }) => {
-        const stateCopy = { ...state };
-
-        if (userStatus !== undefined) stateCopy['userStatus'] = userStatus;
-        if (token !== undefined) stateCopy['token'] = token;
-        if (user !== undefined) {
-            if (user && !user.thumbnail) {
-                user.thumbnail = 'https://www.computerhope.com/jargon/g/geek.jpg';
-            }
-
-            stateCopy['user'] = user;
-        }
-
-        setState(stateCopy);
-    }
 
     const setActivePage = (key) => {
         setState({
@@ -74,10 +55,6 @@ const AppProvider = (props) => {
 
     return (
         <AppContext.Provider value={{
-            userStatus: state.userStatus,
-            token: state.token,
-            user: state.user,
-            setUserInfo,
             activePage: state.activePage,
             setActivePage,
             snackbarVisible: state.snackbarVisible,

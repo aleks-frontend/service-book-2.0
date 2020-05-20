@@ -16,8 +16,11 @@ import TopBar from './UI/TopBar';
 import LoadingSpinner from './UI/LoadingSpinner';
 import FilterCriteriaEmpty from './UI/FilterCriteriaEmpty';
 import { AppContext } from './AppProvider';
-import getServicesAPI from '../API/getServices';
+import fetchApi from '../fetchApi';
 import { fields } from '../helpers';
+
+import { getAppToken } from '../auth';
+import singleLineString from '../singleLineString';
 
 const HistoryMain = styled.div`
     width: 100%;
@@ -25,6 +28,7 @@ const HistoryMain = styled.div`
 
 const History = (props) => {
     const context = React.useContext(AppContext);
+    const token  = getAppToken();
 
     /** Setting up the state **/
     const [state, setState] = React.useState({
@@ -50,20 +54,23 @@ const History = (props) => {
         setState({ ...state, loaded: false });
 
         let pagesLoaded = isScrolled ? state.pagesLoaded : 0;
-
-        const result = await getServicesAPI({
-            query: {
-                page: pagesLoaded,
-                pageSize: 20,
-                search: searchText === undefined ? context.filters.searchText : searchText,
-                orderByColumn: sortCriteria || context.filters.sortCriteria,
-                orderDirection: sortDirection || context.filters.sortDirection,
-                statusActiveFilters: status || context.filters.status
-            },
-            token: context.token
+        
+        const urlStatus = status || context.filters.status;
+        let url = singleLineString`/services?
+            page=${pagesLoaded}
+            &per_page=20
+            &search=${searchText === undefined ? context.filters.searchText : searchText}
+            &orderByColumn=${sortCriteria || context.filters.sortCriteria || 'date'}
+            &orderDirection=${sortDirection || context.filters.sortDirection || 'desc'}
+            &status=${urlStatus.join(',') || ''}`
+        
+        const response = await fetchApi({ 
+            url,
+            method: 'GET',
+            token           
         });
 
-        const { services, hasMore } = result;
+        const { services, hasMore } = response.data;
 
         setState({
             ...state,
