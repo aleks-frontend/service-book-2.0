@@ -28,8 +28,7 @@ const StyledButton = styled.button`
         text-decoration: none; }
 `;
 
-const Button = (props) => {
-    const { isText, onClick, compact, margin, customWidth, disabled, dark } = props;
+const Button = ({ isText, onClick, compact, margin, customWidth, disabled, dark, type, children }) => {    
     return (
         <StyledButton
             isText={isText}
@@ -39,8 +38,9 @@ const Button = (props) => {
             customWidth={customWidth}
             disabled={disabled}
             dark={dark}
+            type={type}
         >
-            {props.children}
+            {children}
         </StyledButton>
     );
 };
