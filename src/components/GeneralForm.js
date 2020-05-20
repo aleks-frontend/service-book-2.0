@@ -43,14 +43,14 @@ const GeneralFormInput = styled.input`
     border: 0.2rem solid ${colors.rddarkgray};
 `;
 
-const GeneralForm = (props) => {
+const GeneralForm = ({ inputs, onSubmit }) => {    
     return (
         <GeneralFormWrapper>
             <GeneralFormHeader>
                 <GeneralFormHeading>Change Password</GeneralFormHeading>
             </GeneralFormHeader>
             <GeneralFormBody>
-                {props.inputs.map((input, index) => {
+                {inputs.map((input, index) => {
                     return (
                         <React.Fragment key={index}>
                             <GeneralFormLabel>{input.label}</GeneralFormLabel>
@@ -65,7 +65,7 @@ const GeneralForm = (props) => {
                 <Button
                     compact={true}
                     dark={true}
-                    onClick={props.onSubmit}>Submit</Button>
+                    onClick={onSubmit}>Submit</Button>
             </GeneralFormBody>
         </GeneralFormWrapper>
     );
