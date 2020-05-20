@@ -16,7 +16,7 @@ const appLogin = ({ history, token, user }) => {
     }
     inMemoryUser = user;
 
-    refreshToken(token);
+    getNewToken(token);
 
     //redirect to home
     history.push('/');
@@ -49,7 +49,7 @@ window.addEventListener('storage', (event) => {
 });
 
 
-const refreshToken = (token) => {
+const getNewToken = (token) => {
     //get new token before it expires, using refreshToken
     const decoded = jwtDecode(token);
     const tokenValidityMilliSeconds = new Date(decoded.exp * 1000 - new Date());
@@ -63,7 +63,7 @@ const refreshToken = (token) => {
 
         if (response && response.status === 200 && response.data.token) {
             inMemoryToken = response.data.token;
-            refreshToken(response.data.token);
+            getNewToken(response.data.token);
         }
     }, tokenValidityMilliSeconds - 60 * 1000);
 }

@@ -86,7 +86,7 @@ const LoginFooter = styled.div`
 const Login = (props) => {    
     const [state, setState] = React.useState({
         isGoogleCallback: false,
-        autoLoginFinished: false
+        autoLoginRejected: false
     })
 
     React.useEffect(() => {
@@ -128,7 +128,7 @@ const Login = (props) => {
         } else {
             setState({
                 ...state,
-                autoLoginFinished: true
+                autoLoginRejected: true
             });
         }
     }
@@ -174,7 +174,7 @@ const Login = (props) => {
 
     return (
         <React.Fragment>
-            {(state.autoLoginFinished || state.isGoogleCallback) && <LoginWrapper>
+            {(state.autoLoginRejected || state.isGoogleCallback) && <LoginWrapper>
                 <LoginBox>
                     <div>{props.location.message}</div>
                     <LoginHeading>Log in</LoginHeading>
@@ -189,7 +189,7 @@ const Login = (props) => {
                     </LoginFooter>
                 </LoginBox>
             </LoginWrapper>}
-            {!state.autoLoginFinished && <div>loading...</div>}
+            {!state.autoLoginRejected && <div>loading...</div>}
         </React.Fragment>
     );
 };

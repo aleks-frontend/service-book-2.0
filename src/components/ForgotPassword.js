@@ -21,13 +21,15 @@ const ForgotPassword = () => {
     const requestPassword = async (e) => {
         e.preventDefault();
         
-        await fetchApi({ 
+        const message = (await fetchApi({ 
             url: '/users/forgotpassword',
             method: 'POST',
             body: {
                 email: state.email
             }
-        });
+        })).data;
+
+        alert(message);
         
         setState({ ...state, redirect: true });
     }
