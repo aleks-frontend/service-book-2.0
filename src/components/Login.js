@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import LoginForm from './LoginForm';
+import LoadingSpinner from './UI/LoadingSpinner';
 import { endpointUrl, colors } from '../helpers';
 
 import { appLogin } from '../auth';
@@ -189,7 +190,7 @@ const Login = (props) => {
                     </LoginFooter>
                 </LoginBox>
             </LoginWrapper>}
-            {!state.autoLoginRejected && <div>loading...</div>}
+            {!state.autoLoginRejected && <LoadingSpinner />}
         </React.Fragment>
     );
 };
