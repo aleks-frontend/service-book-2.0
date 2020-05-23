@@ -5,7 +5,7 @@ const StyledArrow = styled.div`
     margin-left: 1rem;
     width: 2rem;
     height: 3.4rem;
-    background: url('arrow-icon.png') no-repeat center;
+    background: url('arrow-icon-gray.png') no-repeat center;
     background-size: contain;
     transform: rotate(${props => props.sortDirection === 'asc' ? '180deg' : '0deg'});
     transition: 0.3s all;

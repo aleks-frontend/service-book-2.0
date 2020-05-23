@@ -1,8 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { colors, widths, pageTitles, zIndexes } from '../../helpers';
+import { colors, widths, pageTitles } from '../../helpers';
 import Avatar from './Avatar';
+import Logo from './Logo';
 import { AppContext } from '../AppProvider';
 
 const StyledHeader = styled.div`
@@ -14,7 +15,6 @@ const StyledHeader = styled.div`
     color: ${colors.rdlightgray};
     font-size: 2.5rem;
     background-color: ${colors.rdgray};
-    z-index: ${zIndexes.header};
 
     .logo { 
         height: 5rem;
@@ -31,6 +31,7 @@ const Header = () => {
 
     return (
         <StyledHeader>
+            <Logo />
             { pageTitles[context.activePage] }
             <Avatar />
         </StyledHeader>

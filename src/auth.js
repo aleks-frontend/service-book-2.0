@@ -11,9 +11,7 @@ const appLogin = ({ history, token, user }) => {
     routerHistory = history;
 
     //set default thumbnail
-    if (user && !user.thumbnail) {
-        user.thumbnail = 'https://www.computerhope.com/jargon/g/geek.jpg';
-    }
+    setDefaultUserThumbnail(user);
     inMemoryUser = user;
 
     getNewToken(token);
@@ -68,7 +66,14 @@ const getNewToken = (token) => {
     }, tokenValidityMilliSeconds - 60 * 1000);
 }
 
+const setDefaultUserThumbnail = (user) => {
+    if (user && !user.thumbnail) {
+        user.thumbnail = '/img/blank-photo.svg';
+    }
+}
+
 const updateUser = (user) => {
+    setDefaultUserThumbnail(user);
     inMemoryUser = user;
 }
 

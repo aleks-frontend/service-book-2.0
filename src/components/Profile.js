@@ -24,7 +24,8 @@ const ProfileHeader = styled.div`
     background: ${colors.rdgray2};
 `;
 
-const ProfilePhoto = styled.div`
+const ProfilePhoto = styled.img`
+    flex-shrink: 0;
     width: 10rem;
     height: 10rem;
     background: url(${props => props.src});

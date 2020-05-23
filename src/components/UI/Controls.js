@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import SortArrow from './SortArrow';
 
 import { AppContext } from '../AppProvider';
-import { colors } from '../../helpers';
+import { colors, borderRadiuses } from '../../helpers';
 
 const StyledControls = styled.div`
     display: flex;
@@ -20,14 +20,18 @@ const StyledControls = styled.div`
             font-size: 1.2rem;
             color: ${colors.gray} }
 
-        select { height: 3.4rem; }
+        select { 
+            color: ${colors.gray};
+            height: 3.4rem; 
+            border-radius: ${borderRadiuses.small};
+            border: none; }
     }
 
     input[type="text"] {
         padding: 0 0.5rem;
         width: 25rem;
-        border-radius: 0.3rem;
-        border: 1px solid ${colors.lightgray}; }
+        border-radius: ${borderRadiuses.small};
+        border: none; }
 `;
 
 const Controls = (props) => {
