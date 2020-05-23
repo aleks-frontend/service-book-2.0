@@ -13,10 +13,10 @@ import fetchApi from '../fetchApi';
 
 const StyledGrid = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 20rem auto;
+  grid-template-columns: 39rem 1fr;
+  grid-template-rows: 20rem 20rem;
   grid-gap: 2rem;
-  width: 800px;
+  width: 100%;
   max-width: 100%;
 
   .cell {  
@@ -42,8 +42,8 @@ const StyledGrid = styled.div`
     }
 
     &--grid  { 
-      grid-column: span 2; 
-      height: 40rem; }
+      grid-column: 2; 
+      grid-row: 1 / -1; }
 
     &--clickable:hover { cursor: pointer; }
   }
