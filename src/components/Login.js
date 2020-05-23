@@ -15,12 +15,21 @@ const LoginWrapper = styled.div`
 `;
 
 const LoginBox = styled.div`
-    padding: 20px 100px;
+    padding: 2rem 10rem;
     width: 500px;
     max-width: 100%;
     color: ${colors.rddarkgray};
     text-align: center;
     box-sizing: border-box;
+`;
+
+const LoginLogo = styled.img`
+    margin-bottom: 2rem;
+    width: 10rem;
+`;
+
+const LoginMessage = styled.div`
+    margin: 0 0 2rem;
 `;
 
 const LoginHeading = styled.div`
@@ -177,8 +186,9 @@ const Login = (props) => {
         <React.Fragment>
             {(state.autoLoginRejected || state.isGoogleCallback) && <LoginWrapper>
                 <LoginBox>
-                    <div>{props.location.message}</div>
-                    <LoginHeading>Log in</LoginHeading>
+                    <LoginLogo src="/img/login-logo.svg" />
+                    <LoginMessage>{props.location.message}</LoginMessage>
+                    {/* <LoginHeading>Log in</LoginHeading> */}
                     <LoginGoogleButton href={`${endpointUrl}/auth/google`}>
                         Use Google Account
                     </LoginGoogleButton>

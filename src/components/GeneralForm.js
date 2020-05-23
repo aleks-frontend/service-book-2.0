@@ -32,6 +32,7 @@ const GeneralFormLabel = styled.label`
     display: block;
     font-size: 1.4rem;
     line-height: 1.2em;
+    color: ${colors.rddarkgray};
 `;
 
 const GeneralFormInput = styled.input`
@@ -40,7 +41,7 @@ const GeneralFormInput = styled.input`
     margin: 0.5rem 0 1rem;
     width: 100%;
     height: 3.5rem;
-    border: 0.2rem solid ${colors.rddarkgray};
+    border: 0.1rem solid ${colors.rddarkgray};
 `;
 
 const GeneralForm = ({ inputs, onSubmit }) => {    
