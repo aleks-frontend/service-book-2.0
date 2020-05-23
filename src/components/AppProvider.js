@@ -16,8 +16,37 @@ const AppProvider = (props) => {
         snackbarEntity: '',
         snackbarAction: '',
         statusActiveFilters: [],
+        deletePrompt: {
+            id: null,
+            visibility: false,
+            callback: null
+        },
         filters: defaultFilters
     });
+
+    const hideDeletePrompt = (snackbarMessage) => {
+        setState({
+            ...state,
+            deletePrompt: {
+                ...state.deletePrompt,
+                id: null,
+                visibility: false
+            },
+            snackbarVisible: snackbarMessage ? true : false,
+            snackbarMessage: snackbarMessage ? snackbarMessage : ''
+        });
+    };
+
+    const showDeletePrompt = ({ id, callback }) => {
+        setState({
+            ...state,
+            deletePrompt: {
+                id,
+                visibility: true,
+                callback: state.callback || callback
+            }
+        });
+    };
 
     const setActivePage = (key) => {
         setState({
@@ -46,7 +75,8 @@ const AppProvider = (props) => {
         // and redirecting to history
         const activePage = resetRest ? 'history' : state.activePage;
 
-        setState({ ...state, 
+        setState({
+            ...state,
             filters: mergedFilters,
             activePage
         });
@@ -61,6 +91,9 @@ const AppProvider = (props) => {
             snackbarMessage: state.snackbarMessage,
             showSnackbar,
             hideSnackbar,
+            deletePrompt: state.deletePrompt,
+            hideDeletePrompt,
+            showDeletePrompt,
             filters: state.filters,
             setFilters,
         }}>

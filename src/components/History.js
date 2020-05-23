@@ -6,7 +6,6 @@ import styled from 'styled-components';
 import HistoryCard from './HistoryCard';
 import ServiceForm from './ServiceForm';
 import Controls from './UI/Controls';
-import DeletePrompt from './UI/DeletePrompt';
 import Popup from './UI/Popup';
 import Button from './UI/Button';
 import PrintPopup from './UI/PrintPopup';
@@ -35,7 +34,6 @@ const History = (props) => {
         loaded: false,
         showPopup: false,
         popupServiceId: '',
-        deletedServiceId: null,
         showNoServiceMessage: false,
         showPrintPopup: false,
         printedService: null,
@@ -105,21 +103,16 @@ const History = (props) => {
 
         setState({
             ...state,
-            services: servicesStateCopy,
-            deletedServiceId: null,
-            showPopup: false
+            services: servicesStateCopy
         });
+
+        context.hideDeletePrompt('Service was succesfully deleted.');
     }
 
     /** Custom methods for updating the sortCriteria and deletedServiceId states **/
     const updateSortCriteria = (value) => setState({
         ...state,
         sortCriteria: value
-    });
-
-    const updateDeletedServiceId = (value) => setState({
-        ...state,
-        deletedServiceId: value
     });
 
     /** Helper methods for hiding the showing the popup **/
@@ -202,24 +195,13 @@ const History = (props) => {
                 key={service.id}
                 id={service.id}
                 service={service}
-                updateDeletedServiceId={updateDeletedServiceId}
+                deleteService={deleteService}
                 renderUpdateServicePopup={renderUpdateServicePopup}
                 showPopup={setShowPopup}
                 showPrintPopup={showPrintPopup}
             />
         </CSSTransition>
     );
-
-    const renderDeletePrompt = () => {
-        if (state.deletedServiceId) {
-            return (
-                <DeletePrompt
-                    id={state.deletedServiceId}
-                    updateDeletedServiceId={updateDeletedServiceId}
-                    deleteService={deleteService}
-                />);
-        }
-    }
 
     const renderUpdateServicePopup = () => {
         if (state.showPopup) {
@@ -253,7 +235,6 @@ const History = (props) => {
 
     return (
         <React.Fragment>
-            {renderDeletePrompt()}
             <TopBar>
                 <Legend fetchServices={fetchServices} />
                 <Controls

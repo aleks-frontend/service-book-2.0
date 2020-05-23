@@ -4,6 +4,8 @@ import styled from 'styled-components';
 import IconButton from './UI/IconButton.js'
 import { statusEnum, colors, svgIcons } from '../helpers';
 
+import { AppContext } from './AppProvider';
+
 const StyledHistoryCard = styled.div`
     display: flex;
     flex-direction: column;
@@ -151,6 +153,7 @@ const StyledActions = styled.div`
 
 const HistoryCard = (props) => {
     const { service } = props;
+    const context = React.useContext(AppContext);
 
     /** Setting up the state **/
     const [state, setState] = React.useState({
@@ -309,7 +312,10 @@ const HistoryCard = (props) => {
                         onClick={() => props.showPopup(service)} />
                     <IconButton
                         icon="delete"
-                        onClick={() => props.updateDeletedServiceId(service._id)} />
+                        onClick={() => context.showDeletePrompt({ 
+                            id: service._id, 
+                            callback: props.deleteService
+                        })} />
                     <IconButton
                         icon="expand"
                         onClick={extendHistoryItem} />

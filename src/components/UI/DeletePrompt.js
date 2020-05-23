@@ -2,9 +2,11 @@ import React from 'react';
 import styled from 'styled-components';
 
 import Button from './Button';
-import { colors } from '../../helpers';
+import { colors, zIndexes } from '../../helpers';
 import fetchApi from '../../fetchApi';
 import { getAppToken } from '../../auth';
+
+import { AppContext } from '../AppProvider';
 
 const StyledDeletePrompt = styled.div`
     position: fixed;
@@ -13,7 +15,6 @@ const StyledDeletePrompt = styled.div`
     right: 0;
     bottom: 0;
     background: rgba(0,0,0, 0.5);
-    z-index: 2;
 
     .box {
         position: fixed;
@@ -35,23 +36,25 @@ const StyledDeletePrompt = styled.div`
     }
 `;
 
-const DeletePrompt = (props) => {
+const DeletePrompt = () => {
+    const context = React.useContext(AppContext);
+    const { id, callback } = context.deletePrompt;
 
     return (
-        <StyledDeletePrompt onClick={() => props.updateDeletedServiceId(null)}>
+        <StyledDeletePrompt onClick={context.hideDeletePrompt}>
             <div className="box" onClick={(e) => e.stopPropagation()}>
                 <div className="text">Are you sure you want to delete this service?</div>
                 <div className="buttons">
                     <Button
                         onClick={async () => {
                             const response = await fetchApi({
-                                url: `/services/${props.id}`,
+                                url: `/services/${id}`,
                                 method: 'DELETE',
                                 token: getAppToken()
                             });
 
                             if (response.status === 200) {
-                                props.deleteService(props.id);
+                                callback(id);
                             }
                         }}
                         type="button"
@@ -59,7 +62,7 @@ const DeletePrompt = (props) => {
                     >Yes
                     </Button>
                     <Button
-                        onClick={() => props.updateDeletedServiceId(null)}
+                        onClick={context.hideDeletePrompt}
                         isText={true}
                         type="button"
                         margin="0 0.5rem"

@@ -16,10 +16,10 @@ import Header from './UI/Header';
 import Content from './UI/Content';
 import History from './History';
 import Profile from './Profile';
+import DeletePrompt from './UI/DeletePrompt';
 import Entities from './Entities';
 import ServiceForm from './ServiceForm';
 import NotFound from './NotFound';
-import { zIndexes } from '../helpers';
 
 const MainWrapper = styled.div`
     min-height: 100vh;
@@ -30,7 +30,6 @@ const MainWrapper = styled.div`
 const MainBody = styled.div`
     flex: 1;
     display: flex;
-    z-index: ${zIndexes.body};
 `;
 
 const useStyles = makeStyles(theme => ({
@@ -114,6 +113,7 @@ const Main = () => {
                 </Content>
             </MainBody>
             {renderSnackbar()}
+            {context.deletePrompt.visibility && <DeletePrompt />}
         </MainWrapper>
 
     );
