@@ -10,97 +10,27 @@ import { AppContext } from './AppProvider';
 
 import { getAppToken } from '../auth';
 import fetchApi from '../fetchApi';
+import Thumbnail from './UI/Thumbnail';
+import StatusBox from './UI/StatusBox';
 
-const StyledGrid = styled.div`
+const HomeGrid = styled.div`
   display: grid;
-  grid-template-columns: 39rem 1fr;
+  grid-template-columns: repeat(4, 1fr);
   grid-template-rows: 20rem 20rem;
   grid-gap: 2rem;
   width: 100%;
   max-width: 100%;
-
-  .cell {  
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    background: #fff;
-    border-radius: 0.4rem;
-
-    .header {
-      padding: 1rem;
-      font-size: 2rem;
-      color: #fff;
-      background: ${colors.rdgray2}; }
-      
-    .body { 
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      
-      &--padding { padding: 2rem 1rem; } 
-    }
-
-    &--grid  { 
-      grid-column: 2; 
-      grid-row: 1 / -1; }
-
-    &--clickable:hover { cursor: pointer; }
-  }
 `;
 
-const StyledThumbnail = styled.div`
-  display: flex;
-  flex: 1;
-
-  .digit {
-    flex-basis: 40%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13rem;
-    color: ${colors.rdgray}; }
-`;
-
-const StyledFrame = styled.div`
-  flex-basis: 60%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-    .frame {
-      display: flex;
-      flex-direction: column;
-      width: 60%;
-      height: 60%;
-      border: 0.1rem solid ${colors.rdgray2};
-      border-radius: 0.3rem;
-
-      .header {
-        padding: 0.5rem 0.9rem;
-        font-size: 1.1rem;
-      }
-
-      .body {
-        .icon {
-          width: 25%;
-          margin: 0 0.5rem; 
-
-          svg path { fill: ${props => props.status === statusEnum.COMPLETED ? colors.green : colors.orange}; }
-        }
-
-        .label {
-          margin: 0 0.5rem; 
-          color: ${colors.rdgray};
-          font-size: 1.1rem; }
-      }
-    }
+const HomeGridItem = styled.div`
+    grid-column: ${props => props.gridColumn ? props.gridColumn : 'auto'};
+    grid-row: ${props => props.gridRow ? props.gridRow : 'auto'};
 `;
 
 const Home = (props) => {
     const context = React.useContext(AppContext);
-    const token  = getAppToken();
-    
+    const token = getAppToken();
+
     const [state, setState] = React.useState({
         dataReady: false,
         apiData: {
@@ -113,26 +43,25 @@ const Home = (props) => {
         }
     });
 
-
-    React.useEffect(() => {                  
-        const earningsPromise = fetchApi({ 
+    React.useEffect(() => {
+        const earningsPromise = fetchApi({
             url: '/reports/earningsPerMonth',
             method: 'GET',
             token
         });
-        const servicesInProgressPromise = fetchApi({ 
+        const servicesInProgressPromise = fetchApi({
             url: '/reports/serviceCount',
             method: 'POST',
-            token, 
+            token,
             body: { status: statusEnum.INPROGRESS }
         });
-        const servicesCompletedPromise = fetchApi({ 
+        const servicesCompletedPromise = fetchApi({
             url: '/reports/serviceCount',
             method: 'POST',
-            token, 
-            body: { status: statusEnum.COMPLETED } 
+            token,
+            body: { status: statusEnum.COMPLETED }
         });
-        
+
         Promise.all([earningsPromise, servicesInProgressPromise, servicesCompletedPromise])
             .then((results) => {
                 let earnings;
@@ -161,8 +90,8 @@ const Home = (props) => {
                 })
             });
     }, []);
-    
-   
+
+
     // Getting the data for the Chart
     const getChartData = () => {
         return {
@@ -193,13 +122,14 @@ const Home = (props) => {
     }
 
     // Render methods
-    const renderThumbnails = () => {
-        const thumbnailsInfo = [
+    const renderStatusBoxes = () => {
+        const statusBoxesInfo = [
             {
                 statusEnum: statusEnum.INPROGRESS,
                 header: 'Services in progress',
                 servicesCount: state.apiData.servicesCount.inProgress,
                 svgIcon: svgIcons.inProgress,
+                iconColor: colors.orange,
                 label: 'In Progress'
             },
             {
@@ -207,47 +137,39 @@ const Home = (props) => {
                 header: 'Completed services',
                 servicesCount: state.apiData.servicesCount.completed,
                 svgIcon: svgIcons.completed,
+                iconColor: colors.green,
                 label: 'Completed'
             }
         ];
 
-        return thumbnailsInfo.map((thumbnail, index) => {
-            const { statusEnum, header, servicesCount, svgIcon, label } = thumbnail;
+        return statusBoxesInfo.map((thumbnail, index) => {
+            const { statusEnum, header, servicesCount, svgIcon, iconColor, label } = thumbnail;
             return (
-                <div
-                    className="cell cell--clickable"
+                <HomeGridItem
+                    clickable={true}
                     onClick={() => goToFilteredServices(statusEnum)}
                     key={index}
                 >
-                    <div className="header">{header}</div>
-                    <div className="body">
-                        <StyledThumbnail>
-                            <div className="digit">
-                                {servicesCount}
-                            </div>
-                            <StyledFrame status={statusEnum}>
-                                <div className="frame">
-                                    <div className="header">Status</div>
-                                    <div className="body">
-                                        <div className="icon" dangerouslySetInnerHTML={{ __html: svgIcon }}></div>
-                                        <div className="label">{label}</div>
-                                    </div>
-                                </div>
-                            </StyledFrame>
-                        </StyledThumbnail>
-                    </div>
-                </div>
+                    <Thumbnail header={header}>
+                        <StatusBox 
+                            statusEnum={statusEnum} 
+                            svgIcon={svgIcon} 
+                            iconColor={iconColor}
+                            label={label} 
+                            servicesCount={servicesCount}
+                        />
+                    </Thumbnail>                    
+                </HomeGridItem>
             )
         });
     }
 
     const renderGrid = () => {
         return (
-            <StyledGrid>
-                {renderThumbnails()}
-                <div className="cell cell--grid">
-                    <div className="header">Earnings (Last 6 months)</div>
-                    <div className="body body--padding">
+            <HomeGrid>
+                {renderStatusBoxes()}
+                <HomeGridItem gridColumn="2 / -1" gridRow="1 / -1">
+                    <Thumbnail header="Earnings (Last 6 months)" padding="2rem 1rem">
                         <Bar
                             data={getChartData()}
                             legend={null}
@@ -255,9 +177,9 @@ const Home = (props) => {
                                 maintainAspectRatio: false
                             }}
                         />
-                    </div>
-                </div>
-            </StyledGrid>
+                    </Thumbnail>
+                </HomeGridItem>
+            </HomeGrid>
         );
     }
 
