@@ -1,10 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const LogoMain = styled.img`
-    position: absolute;
-    left: 2rem;
-    top: 2rem;
+const LogoMain = styled.img`    
     width: 4.5rem;
 `;
 
