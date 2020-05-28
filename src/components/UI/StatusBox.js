@@ -45,13 +45,20 @@ const StatusBoxBody = styled.div`
     justify-content: center;
     align-items: center;
     flex: 1;
+    overflow: hidden;
     background: #fff;
 `;
 
 const StatusBoxIcon = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 25%;
+    height: 80%;
     margin: 0 0.5rem;
     svg {
+        height: 100%;
+
         path { fill: ${ props => props.iconColor}; }        
     }
 `;
