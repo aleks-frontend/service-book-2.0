@@ -7,8 +7,8 @@ const StyledArrow = styled.div`
     height: 3.4rem;
     background: url('arrow-icon-gray.png') no-repeat center;
     background-size: contain;
-    transform: rotate(${props => props.sortDirection === 'asc' ? '180deg' : '0deg'});
-    transition: 0.3s all;
+    /* transform: rotate(${props => props.sortDirection === 'asc' ? '180deg' : '0deg'}); */
+    /* transition: 0.3s all; */
 
     &:hover { cursor: pointer; }
 `;
