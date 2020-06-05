@@ -70,7 +70,6 @@ const StatusBoxLabel = styled.div`
 `;
 
 const StatusBox = ({ statusEnum, svgIcon, label, iconColor, servicesCount }) => {
-    console.log(iconColor);
     return (
         <StatusBoxContainer>
             <StatusBoxSidebar>
