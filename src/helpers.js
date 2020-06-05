@@ -6,6 +6,7 @@ export const statusEnum = {
     DELIVERED: 'delivered',
 }
 
+// export const endpointUrl = 'https://servicebookdev.herokuapp.com';
 export const endpointUrl = 'https://servicebook2.herokuapp.com';
 
 export const fields = {
