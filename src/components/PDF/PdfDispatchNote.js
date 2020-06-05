@@ -1,5 +1,5 @@
 import React from 'react';
-import { Document, Page, View, Text, StyleSheet, Font } from '@react-pdf/renderer';
+import { Document, Page, View, Text, Image, StyleSheet, Font } from '@react-pdf/renderer';
 
 import { colors } from '../../helpers';
 
@@ -154,11 +154,12 @@ const PdfDispatchNote = (props) => {
                     <View style={styles.headerText}>
                         <Text style={styles.headerTitle}>Service ID: {service.id}</Text>
                         <View style={styles.companyInfo}>
-                            <Text style={modifiers.companyInfoTextMain}>Zoltan Kalmar</Text>
-                            <Text style={styles.companyInfoText}>Petra Petrovica 23,</Text>
-                            <Text style={styles.companyInfoText}>24415 Hajdukovo</Text>
+                            <Text style={modifiers.companyInfoTextMain}>[Serviceman Name]</Text>
+                            <Text style={styles.companyInfoText}>[Serviceman Address]</Text>
+                            <Text style={styles.companyInfoText}>[Serviceman Phone]</Text>
                         </View>
                     </View>
+                    <Image style={styles.logo} src="/img/sb-logo.png" />
                 </View>
                 <View style={styles.body}>
                     <View style={styles.serviceGroup}>
