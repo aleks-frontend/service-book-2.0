@@ -41,7 +41,7 @@ const DeletePrompt = () => {
     const { id, callback } = context.deletePrompt;
 
     return (
-        <StyledDeletePrompt onClick={context.hideDeletePrompt}>
+        <StyledDeletePrompt onClick={() => context.hideDeletePrompt()}>
             <div className="box" onClick={(e) => e.stopPropagation()}>
                 <div className="text">Are you sure you want to delete this service?</div>
                 <div className="buttons">
@@ -62,7 +62,7 @@ const DeletePrompt = () => {
                     >Yes
                     </Button>
                     <Button
-                        onClick={context.hideDeletePrompt}
+                        onClick={() => context.hideDeletePrompt()}
                         isText={true}
                         type="button"
                         margin="0 0.5rem"
