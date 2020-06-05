@@ -8,7 +8,6 @@ export const statusEnum = {
 
 export const endpointUrl = 'https://servicebook2.herokuapp.com';
 
-
 export const fields = {
     customers: [
         {
