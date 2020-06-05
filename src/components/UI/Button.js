@@ -7,6 +7,7 @@ const StyledButton = styled.button`
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
     margin: ${props => props.margin ? props.margin : '0'};
     padding: ${props => props.customWidth ? '0' : (props.compact ? '0 2rem' : '0 3.5rem')};
     width: ${props => props.customWidth ? props.customWidth : 'auto' };
