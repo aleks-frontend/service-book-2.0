@@ -41,7 +41,7 @@ const StyledCreateEntityButton = styled.button`
         height: 2.2rem;
         font-size: 1.6rem;
         line-height: 2.1em;
-        background: url('./plus-icon-white.svg');
+        background: url('./img/plus-icon-white.png');
         background-size: 100% 100%; }
 `;
 
