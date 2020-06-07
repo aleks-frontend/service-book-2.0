@@ -28,6 +28,7 @@ const MainWrapper = styled.div`
 `;
 
 const MainBody = styled.div`
+    position: relative;
     flex: 1;
     display: flex;
 `;
@@ -75,9 +76,7 @@ const Main = () => {
         <MainWrapper>
             <Header />
             <MainBody>
-                <Side>
-                    <Nav />
-                </Side>
+                <Side />
                 <Content>
                     <Switch>
                         <PrivateRoute exact path='/' component={Home} />

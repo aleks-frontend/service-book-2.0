@@ -34,14 +34,11 @@ const StyledForm = styled.form`
             display: block;
             padding: 0.5rem 0.3rem;
             font-size: 1.2rem;
+            line-height: 1.2em;
             color: #fff;
             background: ${colors.rdgray2};
             border-top-left-radius: 4px; 
             border-top-right-radius: 4px;
-            
-            @media screen and (${breakpoints.point1}) {
-                line-height: 1.2em;
-            } 
         }
 
         input[type="text"], textarea {

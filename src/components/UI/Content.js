@@ -8,6 +8,7 @@ const ContentMain = styled.div`
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    overflow: hidden;
     padding: 2rem;
     background: ${colors.rdlightgray};
 `;

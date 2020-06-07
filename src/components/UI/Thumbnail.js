@@ -8,6 +8,7 @@ const ThumbnailMain = styled.div`
     flex-direction: column;
     overflow: hidden;
     height: 100%;
+    min-height: ${props => props.minHeight ? props.minHeight : '0' };
     background: #fff;
     border-radius: 0.4rem;
     cursor: ${props => props.clickable ? 'pointer' : 'auto'};
@@ -28,9 +29,9 @@ const ThumbnailBody = styled.div`
     padding: ${props => props.padding ? props.padding : '0'};
 `
 
-const Thumbnail = ({ header, padding, children }) => {
+const Thumbnail = ({ header, padding, minHeight, children }) => {
     return (
-        <ThumbnailMain>
+        <ThumbnailMain minHeight={minHeight}>
             <ThumbnailHeader>{header}</ThumbnailHeader>
             <ThumbnailBody padding={padding}>
                 {children}
