@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
-import { colors, widths, pageTitles } from '../../helpers';
+import { colors, widths, heights, pageTitles, breakpoints } from '../../helpers';
 import Avatar from './Avatar';
 import Logo from './Logo';
 import { AppContext } from '../AppProvider';
@@ -12,7 +12,7 @@ const HeaderMain = styled.div`
     align-items: center;
     justify-content: space-between;
     padding: 2rem 2rem 2rem ${widths.sidebar};
-    height: 8rem;
+    height: ${heights.header};
     color: ${colors.rdlightgray};
     font-size: 2.5rem;
     background-color: ${colors.rdgray};
@@ -20,15 +20,18 @@ const HeaderMain = styled.div`
 
 const HeaderLeft = styled(Link)`
     position: absolute;
+    display: none;
     left: 2rem;
     top: 2rem;
+
+    @media screen and (min-width: ${breakpoints.tablet}) { display: block; }
 `;
 
 const Header = () => {
     const context = React.useContext(AppContext);
 
     return (
-        <HeaderMain>
+        <HeaderMain>            
             <HeaderLeft
                 onClick={(e) => context.setActivePage('home')}
                 to="/"

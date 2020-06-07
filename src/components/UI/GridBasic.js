@@ -1,12 +1,18 @@
 import React from 'react';
 import styled from 'styled-components';
 
+import { breakpoints } from '../../helpers';
+
 const StyledGrid = styled.div`
     display: grid;
-    grid-template-columns: ${props => `repeat(auto-fill, minmax(${props.columnSize}rem, 1fr))`};
+    grid-template-columns: 1fr;
 	grid-auto-rows: ${props => `${props.rowSize}rem`};
 	grid-gap: ${props => `${props.gapSize}rem`};
     width: 100%;
+
+    @media screen and (min-width: ${breakpoints.tablet}) { 
+        grid-template-columns: ${props => `repeat(auto-fill, minmax(${props.columnSize}rem, 1fr))`};
+    }
 `;
 
 const GridBasic = (props) => {

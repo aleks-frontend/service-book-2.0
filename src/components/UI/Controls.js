@@ -3,17 +3,29 @@ import styled from 'styled-components';
 import SortArrow from './SortArrow';
 
 import { AppContext } from '../AppProvider';
-import { colors, borderRadiuses } from '../../helpers';
+import { colors, borderRadiuses, breakpoints } from '../../helpers';
 
 const StyledControls = styled.div`
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
+
+    @media screen and (min-width: ${breakpoints.tablet}) { 
+        flex-direction: row;
+    }
+
+    @media screen and (min-width: ${breakpoints.desktop}) { 
+        width: 50rem;
+    }
 
     .sort {
         display: flex;
         align-items: center;
-        padding: 0 1rem;
-        margin-right: 1rem;
+
+        @media screen and (min-width: ${breakpoints.tablet}) { 
+            margin-right: 1rem;
+            padding: 0 1rem;
+        }
 
         label {
             margin-right: 1rem;
@@ -21,17 +33,34 @@ const StyledControls = styled.div`
             color: ${colors.gray} }
 
         select { 
+            flex: 1;
+            height: 5rem; 
             color: ${colors.gray};
-            height: 3.4rem; 
             border-radius: ${borderRadiuses.small};
-            border: none; }
+            border: none; 
+
+            @media screen and (min-width: ${breakpoints.tablet}) {
+                flex: unset;
+                height: 3.4rem; 
+             }
+        }
     }
 
     input[type="text"] {
         padding: 0 0.5rem;
-        width: 25rem;
+        margin-bottom: 2rem;
+        width: 100%;
+        height: 5rem;
         border-radius: ${borderRadiuses.small};
-        border: none; }
+        border: none; 
+
+        @media screen and (min-width: ${breakpoints.tablet}) { 
+            flex: 1;
+            margin-bottom: 0;
+            height: auto;
+            max-width: 25rem;
+        }
+    }
 `;
 
 const Controls = (props) => {

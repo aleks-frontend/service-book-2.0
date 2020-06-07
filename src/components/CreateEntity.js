@@ -23,14 +23,11 @@ const StyledCreateEntity = styled.div`
         label { 
             display: block;
             padding: 0.5rem 0.3rem;
+            line-height: 1.2em;
             color: #fff;
             background: ${colors.rdgray2};
             border-top-left-radius: 4px; 
-            border-top-right-radius: 4px;
-            
-            @media screen and (${breakpoints.point1}) {
-                line-height: 1.2em;
-            } 
+            border-top-right-radius: 4px;            
         }
 
         input[type="text"], textarea {

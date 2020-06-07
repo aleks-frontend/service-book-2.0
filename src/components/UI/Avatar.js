@@ -1,12 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import Button from './Button';
-
 import { colors } from '../../helpers';
-import { Link, withRouter } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
-import { appLogout, getAppUser } from '../../auth';
+import { getAppUser } from '../../auth';
 
 const AvatarWrapper = styled.div`
     position: relative;
@@ -44,21 +42,23 @@ const AvatarDropdown = styled.div`
     }
 `;
 
-const Avatar = (props) => {            
+const Avatar = (props) => {
     const user = getAppUser();
-    
-    return (      
-      <AvatarWrapper>
-          <AvatarPhoto imgSrc={user && user.thumbnail} />
-          <AvatarDropdown className="avatarDropdown">
+
+    return (
+        <AvatarWrapper>
+            <Link to='/profile'>
+                <AvatarPhoto imgSrc={user && user.thumbnail} />
+            </Link>
+            {/* <AvatarDropdown className="avatarDropdown">
               <Link to='/profile'>Profile</Link>              
               <Button 
                 onClick={() => appLogout(props.history)}
                 margin="1rem auto"                
                 >Log out</Button>
-          </AvatarDropdown>
-      </AvatarWrapper>
+          </AvatarDropdown> */}
+        </AvatarWrapper>
     );
 };
 
-export default withRouter(Avatar);
+export default Avatar;

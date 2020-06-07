@@ -1,11 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
+import { withRouter } from 'react-router-dom';
 
 import Button from './UI/Button';
 import GeneralForm from './GeneralForm';
 
 import { AppContext } from './AppProvider';
-import { updateUser, getAppUser, getAppToken } from '../auth';
+
+import { updateUser, getAppUser, appLogout, getAppToken } from '../auth';
 import { colors, borderRadiuses } from '../helpers';
 
 import fetchApi from '../fetchApi';
@@ -63,7 +65,7 @@ const ProfileMessage = styled.div`
     text-align: center;
 `;
 
-const Profile = () => {
+const Profile = (props) => {
     const context = React.useContext(AppContext);
     const user = getAppUser();
 
@@ -82,7 +84,7 @@ const Profile = () => {
     const handleInputChange = (name, event) => {
         setState({
             ...state,
-            [name]: event.target.value            
+            [name]: event.target.value
         })
     };
 
@@ -96,7 +98,7 @@ const Profile = () => {
                     name: state.name
                 }
             })).data;
-            
+
             updateUser(updatedUser);
         }
 
@@ -141,7 +143,12 @@ const Profile = () => {
                         value={state.name}
                         onChange={(event) => handleInputChange('name', event)}
                     />
-                    {/* <ProfileInfo secondary={true}>Some title</ProfileInfo> */}
+                    <Button
+                        onClick={() => appLogout(props.history)}
+                        margin="1rem auto"
+                        dark={true}>
+                        Log out
+                    </Button>
                 </ProfileText>
                 {!user.isGoogleAccount &&
                     <Button
@@ -184,4 +191,4 @@ const Profile = () => {
     );
 };
 
-export default Profile;
+export default withRouter(Profile);

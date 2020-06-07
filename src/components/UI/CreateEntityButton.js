@@ -1,11 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
 
+import { zIndexes, breakpoints } from '../../helpers';
+
 const StyledCreateEntityButton = styled.button`
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-bottom: 2rem;
     padding: 0 2rem;
     height: 4rem;
     color: #fff;
@@ -13,12 +16,17 @@ const StyledCreateEntityButton = styled.button`
     border: 1px solid black;
     border-radius: 0.5rem;
     user-select: none;
-    ${props => {
-        if ( props.injectIntoTable ) {
-            return `transform: translate(1rem, calc(100% + 1rem));
-             z-index: 999;`
-        }
-    }};
+
+    @media screen and (min-width: ${breakpoints.tablet}) { 
+        ${props => {
+            if ( props.injectIntoTable ) {
+                return `transform: translate(1rem, calc(100% + 1rem));
+                z-index: ${zIndexes.materialUICreateButton};`
+            }
+        }};
+
+        margin: 0;
+    }
 
     &:hover { cursor: pointer; }
     &:focus { outline: none; }    
