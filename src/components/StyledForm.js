@@ -5,7 +5,7 @@ import { colors } from '../helpers';
 
 const StyledForm = styled.form`
     width: 100%;
-    max-width: 30rem;
+    max-width: 50rem;
     color: ${colors.rddarkgray};
     text-align: left;
 

@@ -15,7 +15,7 @@ const LoginWrapper = styled.div`
 `;
 
 const LoginBox = styled.div`
-    padding: 2rem 10rem;
+    padding: 2rem 3rem;
     width: 500px;
     max-width: 100%;
     color: ${colors.rddarkgray};

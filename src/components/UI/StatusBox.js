@@ -56,7 +56,9 @@ const StatusBoxIcon = styled.div`
     width: 25%;
     height: 80%;
     margin: 0 0.5rem;
+
     svg {
+        width: 100%;
         height: 100%;
 
         path { fill: ${ props => props.iconColor}; }        

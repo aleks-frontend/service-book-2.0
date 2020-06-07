@@ -8,7 +8,7 @@ import GeneralForm from './GeneralForm';
 import { AppContext } from './AppProvider';
 
 import { updateUser, getAppUser, appLogout, getAppToken } from '../auth';
-import { colors, borderRadiuses } from '../helpers';
+import { colors, borderRadiuses, breakpoints } from '../helpers';
 
 import fetchApi from '../fetchApi';
 
@@ -42,11 +42,17 @@ const ProfileText = styled.div`
 `;
 
 const ProfileInfo = styled.input`
+    display: block;
     padding: ${props => props.readOnly ? '0' : '0.5rem'};
-    font-size: ${props => props.readOnly ? '2rem' : '1.6rem'};
+    margin-bottom: 1rem;
+    font-size: ${props => props.readOnly ? '1.5rem' : '1.4rem'};
     color: ${props => props.readOnly ? '#fff' : colors.rddarkgray};
     background: ${props => props.readOnly ? 'transparent' : '#fff'};
     border: none;
+
+    @media screen and ( min-width: ${breakpoints.tablet} ) { 
+        font-size: ${props => props.readOnly ? '2rem' : '1.6rem'};
+    }
 `;
 
 const ProfileBody = styled.div`
@@ -143,22 +149,23 @@ const Profile = (props) => {
                         value={state.name}
                         onChange={(event) => handleInputChange('name', event)}
                     />
+                    {!user.isGoogleAccount &&
+                        <Button
+                            dark={true}
+                            compact={true}
+                            customWidth="6rem"
+                            margin="0.5rem 0 0"
+                            onClick={handleEditClick}>
+                            {state.editMode ? 'Save' : 'Edit'}
+                        </Button>}
                     <Button
                         onClick={() => appLogout(props.history)}
-                        margin="1rem auto"
+                        margin="0 0 0 1rem"
+                        compact={true}
                         dark={true}>
                         Log out
                     </Button>
                 </ProfileText>
-                {!user.isGoogleAccount &&
-                    <Button
-                        dark={true}
-                        compact={true}
-                        customWidth="6rem"
-                        margin="0.5rem 0 0"
-                        onClick={handleEditClick}>
-                        {state.editMode ? 'Save' : 'Edit'}
-                    </Button>}
             </ProfileHeader>
             <ProfileBody>
                 {user.isGoogleAccount && <ProfileMessage>
