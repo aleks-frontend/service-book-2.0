@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { colors } from '../../helpers';
+import { colors, svgIcons } from '../../helpers';
 
 const StyledSpinner = styled.div`
     position: absolute;
@@ -11,15 +11,13 @@ const StyledSpinner = styled.div`
     transform: translate(-50%, -50%);  
     width: 8rem;
     height: 8rem;
+
     div {
         position: absolute;
-        border: 0.4rem solid ${colors.dpblue};
         opacity: 1;
-        border-radius: 50%;
         animation: lds-ripple 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
     }
 
-    div:nth-child(2) { animation-delay: -0.5s; }
     @keyframes lds-ripple {
         0% {
             top: 3.6rem;
@@ -29,7 +27,7 @@ const StyledSpinner = styled.div`
             opacity: 1;
         }
         100% {
-            top: 0p;
+            top: 0;
             left: 0;
             width: 7.2rem;
             height: 7.2rem;
@@ -41,8 +39,9 @@ const StyledSpinner = styled.div`
 const LoadingSpinner = () => {
     return (
         <StyledSpinner>
-            <div></div>
-            <div></div>
+            {/* <div></div> */}
+            <div dangerouslySetInnerHTML={{ __html: svgIcons.loadingSpinner }}></div>
+            {/* <div dangerouslySetInnerHTML={{ __html: svgIcons.loadingSpinner }}></div> */}
         </StyledSpinner>
     );
 }
