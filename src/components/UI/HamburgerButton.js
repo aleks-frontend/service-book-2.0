@@ -1,8 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { AppContext } from '../AppProvider';
-
 import { breakpoints, zIndexes } from '../../helpers';
 
 const HamburgerButtonMain = styled.div`
@@ -29,6 +27,7 @@ const HamburgerButtonBar = styled.div`
     background: #fff;
     transition: all 0.3s;
     transform: ${props => props.animated ? 'rotate(135deg)' : 'rotate(0deg)'};
+    user-select: none;
 
     &::after, &::before {
         content: '';
