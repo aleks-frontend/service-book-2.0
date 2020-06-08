@@ -349,7 +349,7 @@ const PdfInvoice = (props) => {
                 </View>
                 <View style={styles.footer}>
                     <View style={styles.signature}>
-                        <Text style={styles.signatureName}>Zoltan Kalmar</Text>
+                        <Text style={styles.signatureName}>[Serviceman Name]</Text>
                     </View>
                     <View style={styles.signature}>
                         <Text style={styles.signatureName}>{customer.name}</Text>
