@@ -1,9 +1,10 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { Bar } from 'react-chartjs-2';
-import styled from 'styled-components';
 
 import LoadingSpinner from './UI/LoadingSpinner';
+import withServices from './withServices';
+import LastModifiedServices from './LastModifiedServices';
 
 import { colors, statusEnum, svgIcons } from '../helpers';
 import { AppContext } from './AppProvider';
@@ -153,6 +154,14 @@ const Home = (props) => {
     
     
     const renderGrid = () => {
+        const LastModifiedServicesHome = withServices( LastModifiedServices, () => {
+            return fetchApi({
+                url: '/services?page=0&per_page=4&orderByColumn=lastModified&orderDirection=desc&status=received,inprogress,completed',
+                method: 'GET',
+                token
+            });
+        });
+
         return (
             <StyledGrid>
                 {renderStatusBoxes()}
@@ -176,6 +185,7 @@ const Home = (props) => {
                         />
                     </Thumbnail>
                 </StyledGridItem>
+                <LastModifiedServicesHome />
             </StyledGrid>
         );
     }

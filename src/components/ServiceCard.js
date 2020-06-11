@@ -1,15 +1,20 @@
 import React from 'react';
 import styled from 'styled-components';
+import Modal from 'react-modal';
 
-import IconButton from './UI/IconButton.js'
-import { statusEnum, colors, svgIcons } from '../helpers';
+import IconButton from './UI/IconButton';
+import PrintPrompt from './UI/PrintPrompt';
+import ServiceForm from './ServiceForm';
+import { statusEnum, colors, svgIcons, fields, modalOverlayStyle } from '../helpers';
 
 import { AppContext } from './AppProvider';
+import DeletePrompt from './UI/DeletePrompt';
 
-const StyledHistoryCard = styled.div`
+const StyledServiceCard = styled.div`
     display: flex;
     flex-direction: column;
     grid-row: ${props => props.extended ? 'span 2' : 'auto'};
+    height: 100%;
     overflow: hidden;
     background: #fff;
     border-radius: 0.5rem;
@@ -39,7 +44,7 @@ const StyledHistoryCard = styled.div`
 
     .header {
         display: flex;
-        align-items: center;
+        align-items: center;        
         padding: 1rem 1.5rem;
         background: ${colors.rdgray2};
 
@@ -67,14 +72,20 @@ const StyledHistoryCard = styled.div`
         }
 
         .text {
+            flex: 1;
+            overflow: hidden;
             margin-left: 1.5rem;
             color: #fff;
 
             .heading {
+                overflow: hidden;
                 margin-bottom: 0.2rem;
-                font-size: 2.1rem; }
+                font-size: ${props => props.compact ? '1.9rem' : '2.1rem'};
+                text-overflow: ellipsis;
+                white-space: nowrap; }
 
-            .subheading { font-size: 1.5rem; }
+            .subheading { 
+                font-size: ${props => props.compact ? '1.3rem' : '1.5rem'}; }
         }
     }
 
@@ -87,7 +98,7 @@ const StyledHistoryCard = styled.div`
             margin-bottom: 1.5rem;
 
             .heading { 
-                font-size: 2rem;
+                font-size: ${props => props.compact ? '1.8rem' : '2rem'};
                 color: ${colors.rddarkgray};
                 margin-bottom: 0.5rem; 
 
@@ -151,18 +162,31 @@ const StyledActions = styled.div`
         text-transform: uppercase; }
 `;
 
-const HistoryCard = (props) => {
+const ServiceCard = (props) => {
     const { service } = props;
     const context = React.useContext(AppContext);
 
     /** Setting up the state **/
     const [state, setState] = React.useState({
         extended: false,
-        showPrintPopup: false
+        showPrintModal: false,
+        showDeleteModal: false,
+        showUpdateModal: false
     });
 
     /** Expand and collapse the HistoryCard **/
-    const extendHistoryItem = () => setState({ ...state, extended: !state.extended });
+    const extendServiceCard = () => setState({ ...state, extended: !state.extended });
+
+    /** Universal method for toggling all modals **/
+    const toggleModal = (type) => {
+        /* Screen Readers Fix */
+        Modal.setAppElement('#main');
+
+        setState({
+            ...state,
+            [`show${type}Modal`]: !state[`show${type}Modal`]
+        });
+    };
 
     /** Render Methods **/
     const renderDevices = () => {
@@ -258,7 +282,11 @@ const HistoryCard = (props) => {
     }
 
     return (
-        <StyledHistoryCard status={service.status} extended={state.extended}>
+        <StyledServiceCard 
+            status={service.status} 
+            extended={state.extended}
+            compact={props.compact}
+        >
             <div className="header">
                 <div
                     className="statusIcon"
@@ -273,10 +301,10 @@ const HistoryCard = (props) => {
                 </div>
             </div>
             <div className="body">
-                <div className="block">
+                {!props.compact && <div className="block">
                     <div className="heading">Description</div>
                     <div className="content">{service.description}</div>
-                </div>
+                </div>}
                 <div className="block">
                     <div className="heading">Devices</div>
                     <div className="content">
@@ -305,27 +333,69 @@ const HistoryCard = (props) => {
                 )}
             </div>
             <div className="footer">
-                <div className="serviceId">ID: {props.id}</div>
+                {!props.compact && <div className="serviceId">ID: {props.id}</div>}
                 <div className="buttons">
                     <IconButton
                         icon="update"
-                        onClick={() => props.showPopup(service)} />
+                        onClick={() => toggleModal('Update')} />
                     <IconButton
                         icon="delete"
-                        onClick={() => context.showDeletePrompt({ 
-                            id: service._id, 
-                            callback: props.deleteService
-                        })} />
-                    <IconButton
+                        onClick={() => toggleModal('Delete')} />
+                    {!props.compact && <IconButton
                         icon="expand"
-                        onClick={extendHistoryItem} />
+                        onClick={extendServiceCard} />}
                     <IconButton
                         icon="print"
-                        onClick={() => props.showPrintPopup(service)} />
+                        onClick={() => toggleModal('Print')} />
                 </div>
             </div>
-        </StyledHistoryCard>
+            {state.showDeleteModal && <Modal
+                isOpen={state.showDeleteModal}
+                onRequestClose={() => toggleModal('Delete')}
+                contentLabel="Delete Modal"
+                style={modalOverlayStyle}
+            >
+                <DeletePrompt
+                    okCallback={props.deleteService}
+                    cancelCallback={() => toggleModal('Delete')}
+                />
+            </Modal>}
+            {state.showPrintModal && <Modal
+                isOpen={state.showPrintModal}
+                onRequestClose={() => toggleModal('Print')}
+                contentLabel="Print Modal"
+                style={modalOverlayStyle}
+            >
+                <PrintPrompt
+                    service={service}
+                    hidePopup={() => toggleModal('Print')}
+                />
+            </Modal>}
+            {state.showUpdateModal && <Modal
+                isOpen={state.showUpdateModal}
+                onRequestClose={() => toggleModal('Update')}
+                contentLabel="Update Modal"
+                style={{
+                    ...modalOverlayStyle,
+                    content: {
+                        ...modalOverlayStyle.content,
+                        padding: '0',
+                    }
+                }}
+            >
+                <ServiceForm
+                    isUpdate={true}
+                    fields={fields}
+                    service={service}
+                    updateService={(updatedService) => {
+                        toggleModal('Update');
+                        props.updateService(updatedService);
+                    }}
+                    hidePopup={() => toggleModal('Update')}
+                />
+            </Modal>}
+        </StyledServiceCard>
     );
 };
 
-export default HistoryCard;
+export default ServiceCard;

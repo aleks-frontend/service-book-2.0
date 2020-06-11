@@ -488,8 +488,8 @@ const ServiceForm = (props) => {
                 })).data;
 
                 // update History state here !!!
-                props.updateHistoryStateServices(updatedService);
-                context.showSnackbar('Service updated');
+                props.updateService(updatedService);
+                // context.showSnackbar('Service updated');
             }
         }
     }

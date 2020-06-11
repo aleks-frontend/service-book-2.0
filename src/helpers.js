@@ -13,7 +13,7 @@ export const fields = {
         {
             name: 'name',
             label: 'Name',
-            defaultVal: '%presetVal%',   
+            defaultVal: '%presetVal%',
             required: true,
             autoFocus: true
         },
@@ -24,25 +24,25 @@ export const fields = {
         },
         {
             name: 'email',
-            label: 'Email',            
+            label: 'Email',
             required: false
         },
         {
             name: 'address',
-            label: 'Address',            
+            label: 'Address',
             required: false
         }
     ],
     devices: [
         {
             name: 'name',
-            label: 'Name',            
+            label: 'Name',
             calculated: ['manufacturer', 'model', 'serial'],
             editable: 'never'
         },
         {
             name: 'manufacturer',
-            label: 'Manufacturer',            
+            label: 'Manufacturer',
             required: true,
             autoFocus: true
         },
@@ -54,13 +54,13 @@ export const fields = {
         },
         {
             name: 'serial',
-            label: 'Serial'            
+            label: 'Serial'
         }
     ],
     actions: [
         {
             name: 'name',
-            label: 'Name',            
+            label: 'Name',
             required: true,
             autoFocus: true
         },
@@ -174,29 +174,29 @@ export const heights = {
 }
 
 export const legendItems = [
-    { 
-        statusColor: colors.yellow, 
-        statusEnum: statusEnum.RECEIVED, 
-        statusLabel: 'Received', 
-        statusIcon: svgIcons.received 
+    {
+        statusColor: colors.yellow,
+        statusEnum: statusEnum.RECEIVED,
+        statusLabel: 'Received',
+        statusIcon: svgIcons.received
     },
-    { 
-        statusColor: colors.orange, 
-        statusEnum: statusEnum.INPROGRESS, 
-        statusLabel: 'In Progress', 
-        statusIcon: svgIcons.inProgress 
+    {
+        statusColor: colors.orange,
+        statusEnum: statusEnum.INPROGRESS,
+        statusLabel: 'In Progress',
+        statusIcon: svgIcons.inProgress
     },
-    { 
-        statusColor: colors.green, 
-        statusEnum: statusEnum.COMPLETED, 
-        statusLabel: 'Completed', 
-        statusIcon: svgIcons.completed 
+    {
+        statusColor: colors.green,
+        statusEnum: statusEnum.COMPLETED,
+        statusLabel: 'Completed',
+        statusIcon: svgIcons.completed
     },
-    { 
-        statusColor: colors.blue, 
-        statusEnum: statusEnum.SHIPPED, 
-        statusLabel: 'Shipped', 
-        statusIcon: svgIcons.shipped 
+    {
+        statusColor: colors.blue,
+        statusEnum: statusEnum.SHIPPED,
+        statusLabel: 'Shipped',
+        statusIcon: svgIcons.shipped
     }
 ];
 
@@ -211,4 +211,19 @@ export const zIndexes = {
     side: 11, /* Overriding Material UI <th> z-index */
     hamburgerButton: 12,
     materialUICreateButton: 10
+}
+
+export const modalOverlayStyle = {
+    overlay: {
+        zIndex: '9999',
+        background: 'rgba(0, 0, 0, 0.75)'
+    },
+    content: {
+        top: '50%',
+        bottom: 'auto',
+        left: '50%',
+        right: 'auto',
+        maxHeight: '100%',
+        transform: 'translate(-50%, -50%)'
+    }
 }

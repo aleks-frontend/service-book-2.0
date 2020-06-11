@@ -11,7 +11,6 @@ import { AppContext } from './AppProvider';
 import PrivateRoute from './PrivateRoute';
 import Home from './Home';
 import Side from './UI/Side';
-import Nav from './UI/Nav';
 import Header from './UI/Header';
 import Content from './UI/Content';
 import History from './History';
@@ -20,6 +19,11 @@ import DeletePrompt from './UI/DeletePrompt';
 import Entities from './Entities';
 import ServiceForm from './ServiceForm';
 import NotFound from './NotFound';
+
+import withServices from './withServices';
+import fetchApi from '../fetchApi';
+import singleLineString from '../singleLineString';
+import { getAppToken } from '../auth';
 
 const MainWrapper = styled.div`
     min-height: 100vh;
@@ -42,6 +46,7 @@ const useStyles = makeStyles(theme => ({
 const Main = () => {
     const context = React.useContext(AppContext);
     const classes = useStyles();
+    const token = getAppToken();
 
     const renderSnackbar = () => {
         return (
@@ -72,6 +77,28 @@ const Main = () => {
         );
     }
 
+    const HistoryWithServices = withServices(History, ({
+        pagesLoaded = 0,
+        urlStatus = context.filters.status,
+        searchText,
+        sortCriteria,
+        sortDirection
+    }) => {
+        let url = singleLineString`/services?
+            page=${pagesLoaded}
+            &per_page=20
+            &search=${searchText === undefined ? context.filters.searchText : searchText}
+            &orderByColumn=${sortCriteria || context.filters.sortCriteria || 'date'}
+            &orderDirection=${sortDirection || context.filters.sortDirection || 'desc'}
+            &status=${urlStatus.join(',') || ''}`
+
+        return fetchApi({
+            url,
+            method: 'GET',
+            token
+        });
+    });
+
     return (
         <MainWrapper>
             <Header />
@@ -81,7 +108,7 @@ const Main = () => {
                     <Switch>
                         <PrivateRoute exact path='/' component={Home} />
                         <PrivateRoute exact path='/new-service' component={ServiceForm} />
-                        <PrivateRoute exact path='/history' component={History} />
+                        <PrivateRoute exact path='/history' component={HistoryWithServices} />
                         <PrivateRoute
                             exact
                             path='/customers'

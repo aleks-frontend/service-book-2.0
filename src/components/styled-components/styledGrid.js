@@ -7,6 +7,7 @@ export const StyledGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 20rem 20rem;
+  grid-auto-rows: 30rem;
   grid-gap: 2rem;
   width: 100%;
   max-width: 100%;
